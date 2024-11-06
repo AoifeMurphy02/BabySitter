@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="mb-4">Register</h1>
+        <form action="/register" method="POST">
+            <div class="mb-3">
+                <input type="text" class="form-control" autocomplete="off" autofocus required name="name" placeholder="Enter your name">
+            </div>
+            <div class="mb-3">
+                <select class="form-select" name="sport">
+                    <option disabled selected>Select your favorite sport</option>
+                    {% for sport in sports %}
+                        <option value="{{ sport }}">{{ sport }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+{% endblock %}
