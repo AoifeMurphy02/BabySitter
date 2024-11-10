@@ -6,6 +6,7 @@ app = Flask(__name__)
 alive = 0
 data = {}
 
+
 @app.route("/")
 def index():
     return render_template("index.html")
