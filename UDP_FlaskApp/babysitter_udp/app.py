@@ -1,6 +1,18 @@
 from flask import Flask, render_template, request, redirect
+from pubnub.pnconfiguration import PNConfiguration
+from pubnub.pubnub import PubNub
+from pubnub.exceptions import PubNubException
+import os
+
 
 app = flask = Flask(__name__)
+
+# pubnub keys and ID
+pnconfig = PNConfiguration()
+pnconfig.subscribe_key = 'sub-c-f8bff00d-78e1-4bb1-86d5-e81d5043ed37'
+pnconfig.publish_key = 'pub-c-a5e694de-d708-4674-9f6a-9df8bdae40a7'
+pnconfig.secret_key = 'sec-c-MzVlZDVmMzUtZjU3OC00YjgzLTg2ZWEtN2NlZWIyNWEwNGQ3'  
+pnconfig.uuid ='Baby-device'
 
 SPORTS = ["Basketball", "Badminton","Volleyball"]
 REGISTRANTS = {}
