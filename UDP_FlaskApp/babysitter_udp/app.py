@@ -4,7 +4,8 @@ from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub
 from pubnub.exceptions import PubNubException
 from dotenv import load_dotenv
-import os, re ,bcrypt
+import os, re ,bcrypt, requests, json
+from oauthlib.oauth2 import WebApplicationClient
 
 
 app = flask = Flask(__name__)
@@ -20,6 +21,16 @@ app.config["MYSQL_CUSTOM_OPTIONS"] = {"ssl": {"ca":  os.path.join(os.path.dirnam
 
 mysql = MySQL(app)
 
+
+# Disables OAuth 2 https requirement. (FOR TESTING ONLY)
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
+
+# Google OAuth 2
+GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
+GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
+GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
+client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
 # pubnub keys and ID
 pnconfig = PNConfiguration()
@@ -98,6 +109,56 @@ def login():
         else:
             flash('Invalid username or password', 'danger')
     return render_template('login.html')
+
+@app.route('/login/google')
+def google_login():
+    google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
+    authorization_endpoint = google_provider_cfg["authorization_endpoint"]
+
+    request_uri = client.prepare_request_uri(
+        authorization_endpoint,
+        redirect_uri=request.base_url + "/callback",
+        scope=["openid", "email", "profile"],
+    )
+    return redirect(request_uri)
+
+@app.route('/login/google/callback')
+def google_callback():
+    code = request.args.get("code")
+
+    google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
+    token_endpoint = google_provider_cfg["token_endpoint"]
+
+    token_url, headers, body = client.prepare_token_request(
+        token_endpoint,
+        authorization_response=request.url,
+        redirect_url=request.base_url,
+        code=code
+    )
+    token_response = requests.post(
+        token_url,
+        headers=headers,
+        data=body,
+        auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
+    )
+    client.parse_request_body_response(json.dumps(token_response.json()))
+
+    # Get user info
+    userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
+    uri, headers, body = client.add_token(userinfo_endpoint)
+    userinfo_response = requests.get(uri, headers=headers, data=body)
+
+    # Store the user information in session
+    user_info = userinfo_response.json()
+    if user_info.get("email_verified"):
+        unique_id = user_info["sub"]
+        users_email = user_info["email"]
+        session['username'] = users_email
+        flash('Login successful!', 'success')
+        return redirect(url_for('loggedin'))
+    else:
+        return redirect(url_for('login'))
+
 
 
 @app.route('/loggedin')
