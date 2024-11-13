@@ -6,20 +6,17 @@ from pubnub.exceptions import PubNubException
 from dotenv import load_dotenv
 import os, re ,bcrypt, requests, json
 from oauthlib.oauth2 import WebApplicationClient
+import my_db
+db= my_db.db
+
 
 
 app = flask = Flask(__name__)
 load_dotenv()
 app.secret_key = os.getenv('SECRET_KEY')
 
-# MySQL configurations 
-app.config['MYSQL_HOST'] = os.getenv('MYSQL_HOST')
-app.config['MYSQL_USER'] = os.getenv('MYSQL_USER')
-app.config['MYSQL_PASSWORD'] = os.getenv('MYSQL_PASSWORD')
-app.config['MYSQL_DB'] = os.getenv('MYSQL_DB')
-app.config["MYSQL_CUSTOM_OPTIONS"] = {"ssl": {"ca":  os.path.join(os.path.dirname(__file__), 'eu-west-1-bundle.pem')}} 
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('MYSQL_HOST')
 
-mysql = MySQL(app)
 
 
 # Disables OAuth 2 https requirement. (FOR TESTING ONLY)
@@ -40,6 +37,8 @@ pnconfig.secret_key = 'sec-c-MzVlZDVmMzUtZjU3OC00YjgzLTg2ZWEtN2NlZWIyNWEwNGQ3'
 pnconfig.uuid ='Baby-device'
 
 pubnub =PubNub(pnconfig)
+
+db.init_app(app)
 
 # granting access to post to channel
 
@@ -63,8 +62,16 @@ def index():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        username = request.form['username']
+        user_name = request.form['username']
         password = request.form['password']
+        name = request.form['name']
+        email = request.form['email']
+        
+        # Check if email is valid
+        email_pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
+        if not re.match(email_pattern, email):
+            flash('Invalid email address. Please enter a valid email.', 'danger')
+            return render_template('signup.html')
 
         # Password requirements check
         if not re.fullmatch(r'^(?=.*[A-Z])(?=.*\d).{8,}$', password):
@@ -72,20 +79,14 @@ def signup():
             return render_template('signup.html')
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
-        # Check if username already exists
-        cur = mysql.connection.cursor()
-        cur.execute("SELECT * FROM users WHERE username = %s", [username])
-        existing_user = cur.fetchone()
+        # Check if email already exists
+        existing_user = my_db.get_babysitter_by_email(email)
         if existing_user:
-            flash('Username already taken. Please choose a different username.', 'danger')
+            flash('Email already registered. Please choose a different email.', 'danger')
             return render_template('signup.html')
-        
+
         # Save user to database
-        cur = mysql.connection.cursor()
-        cur.execute("INSERT INTO users(username, password) VALUES(%s, %s)", (username, hashed_password))
-        mysql.connection.commit()
-        cur.close()
-        
+        my_db.add_babysitter(user_name=user_name, password=hashed_password, name=name, email=email)
         flash('You have successfully signed up!', 'success')
         return redirect(url_for('login'))
     return render_template('signup.html')
@@ -93,21 +94,17 @@ def signup():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form['username']
+        email = request.form['email']
         password = request.form['password']
         
-        # Fetch user from database
-        cur = mysql.connection.cursor()
-        cur.execute("SELECT * FROM users WHERE username=%s", [username])
-        user = cur.fetchone()
-        cur.close()
+        user = my_db.get_babysitter_by_email(email)
         
-        if user and bcrypt.checkpw(password.encode('utf-8'), user[2].encode('utf-8')):
-            session['username'] = user[1]
+        if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+            session['email'] = user.email
             flash('Login successful!', 'success')
             return redirect(url_for('loggedin'))
         else:
-            flash('Invalid username or password', 'danger')
+            flash('Invalid email or password. Please try again.', 'danger')
     return render_template('login.html')
 
 @app.route('/login/google')
@@ -163,8 +160,8 @@ def google_callback():
 
 @app.route('/loggedin')
 def loggedin():
-    if 'username' in session:
-        return f'Welcome {session["username"]}!'
+    if 'email' in session:
+        return f'Welcome {session["email"]}!'
     else:
         return redirect(url_for('login'))
     
