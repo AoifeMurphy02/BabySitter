@@ -2,6 +2,8 @@ from flask import Flask, render_template, request, redirect
 
 app = flask = Flask(__name__)
 
+VIDEO_URL = "http://192.168.183.28:8000/video1.mp4"
+
 SPORTS = ["Basketball", "Badminton","Volleyball"]
 REGISTRANTS = {}
 
@@ -28,6 +30,10 @@ def register():
         return render_template("error.html", message=message)
     REGISTRANTS[name] = sport
     return redirect("/registrants")
+
+@app.route("/video")
+def video():
+    return render_template("video.html", video_url=VIDEO_URL)
 
     # return render_template("success.html")
 if __name__ == "__main__":
