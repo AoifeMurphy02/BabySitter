@@ -10,7 +10,8 @@ import os
 import subprocess
 import json
 import subprocess  
-import threading  
+import threading 
+#import pyaudio
 
 load_dotenv()
 
@@ -32,6 +33,7 @@ subscription = pubnub.channel(app_channel).subscription()
 #subscription.on_message= lambda message: handle_message(message)
 subscription.subscribe()
 
+
 def notify_video_ready(file_path):
     pubnub.publish().channel(app_channel).message({"video_ready": file_path}).sync()
     print(f"Notification sent for video: {file_path}")
@@ -43,16 +45,22 @@ def start_http_server(directory, port=8000, ip_address="192.168.183.28"):
     subprocess.Popen(command)
     print(f"HTTP server started at http://{ip_address}:{port}/")
 
+def convert_to_mp4(h264_path, mp4_path):
+    """Converts H.264 file to MP4 using ffmpeg."""
+    print("Converting video to .mp4 format...")
+    result = subprocess.run(
+        ["ffmpeg", "-y", "-i", h264_path, "-c:v", "copy", mp4_path],
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    if result.returncode == 0:
+        print(f"Conversion successful. Video saved as '{mp4_path}'")
+    else:
+        print(f"Conversion failed: {result.stderr.decode()}")
+
 def camera():
     # Initialize the camera
     picam2 = Picamera2()
-    # Debugging: Print detected camera information
-    camera_info = picam2.global_camera_info()
-    print("Detected cameras:", camera_info)
-
-    if not camera_info:
-        print("No cameras detected. Exiting...")
-        return
 
     # Set up video configuration
     video_config = picam2.create_video_configuration(main={"size": (1920, 1080)})
@@ -68,27 +76,36 @@ def camera():
     picam2.capture_file('/home/aoife/img.jpg')
     print("Image captured and saved as 'img.jpg'")
 
-    # Record a video
-    video_file_path = '/home/aoife/Videos/video1.h264'
+    # Record a video and save it as '.h264'
+    video_h264_path = '/home/aoife/Videos/video1.h264'
+    video_mp4_path = '/home/aoife/Videos/video1.mp4'
     encoder = H264Encoder(bitrate=1000000)
-    picam2.start_recording(encoder, video_file_path)
-    
+    picam2.start_recording(encoder, video_h264_path)
+
     print("Recording video...")
     sleep(5)  # Record for 5 seconds
     picam2.stop_recording()
-    print(f"Video recorded and saved as '{video_file_path}'")
+    print(f"Video recorded and saved as '{video_h264_path}'")
 
     # Stop the camera
     picam2.stop()
 
-    # Start the HTTP server to serve the video file
-    video_directory = os.path.dirname(video_file_path)  # Get the directory where the video is stored
-    http_server_thread = threading.Thread(target=start_http_server, args=(video_directory,))
-    http_server_thread.daemon = True
-    http_server_thread.start()
+    # Convert the recorded video to MP4
+    convert_to_mp4(video_h264_path, video_mp4_path)
 
-    # Notify laptop about the new video
-    notify_video_ready(video_file_path)
+    # Start the HTTP server to serve the video file
+    video_directory = os.path.dirname(video_mp4_path)
+    start_http_server(video_directory)
+
+    # Notify the app about the new video
+    notify_video_ready(video_mp4_path)
+
+#def microphone():
+    # Initialize PyAudio
+ #   p = pyaudio.PyAudio()
+
+
 
 if __name__ == "__main__":
     camera()
+#   microphone()

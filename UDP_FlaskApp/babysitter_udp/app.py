@@ -52,6 +52,8 @@ def grant_access():
 
 grant_access()
 
+VIDEO_URL = "http://192.168.183.28:8000/video1.mp4"
+
 SPORTS = ["Basketball", "Badminton","Volleyball"]
 REGISTRANTS = {}
 
@@ -190,6 +192,11 @@ def register():
     REGISTRANTS[name] = sport
     return redirect("/registrants")
 
+
+@app.route("/video")
+def video():
+    return render_template("video.html", video_url=VIDEO_URL)
+
 # publish message to pubnub
 
 @app.route('/publish', methods=['POST'])
@@ -211,6 +218,7 @@ def publish_message():
             return jsonify({'status': 'error', 'message': str(e)}), 500
     else:
         return jsonify({'status': 'error', 'message': 'No message provided'}), 400
+
 
     # return render_template("success.html")
 if __name__ == "__main__":
