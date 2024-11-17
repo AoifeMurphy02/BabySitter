@@ -15,8 +15,11 @@ app = flask = Flask(__name__)
 load_dotenv()
 app.secret_key = os.getenv('SECRET_KEY')
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('MYSQL_HOST')
-
+#app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('MYSQL_HOST')
+app.config['SQLALCHEMY_DATABASE_URI'] = (
+    f"mysql+pymysql://{os.getenv('MYSQL_USER')}:{os.getenv('MYSQL_PASSWORD')}"
+    f"@{os.getenv('MYSQL_HOST')}/{os.getenv('MYSQL_DATABASE')}"
+)
 
 
 # Disables OAuth 2 https requirement. (FOR TESTING ONLY)
@@ -53,6 +56,8 @@ def grant_access():
 grant_access()
 
 VIDEO_URL = "http://192.168.183.28:8000/video1.mp4"
+SOUND_URL = "http://192.168.183.28:8000/sound1.wav"
+
 
 SPORTS = ["Basketball", "Badminton","Volleyball"]
 REGISTRANTS = {}
@@ -196,6 +201,12 @@ def register():
 @app.route("/video")
 def video():
     return render_template("video.html", video_url=VIDEO_URL)
+@app.route("/sound")
+def sound():
+    print(SOUND_URL) 
+    return render_template("sound.html", sound_url=SOUND_URL)
+   
+
 
 # publish message to pubnub
 
