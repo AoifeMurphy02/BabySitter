@@ -22,7 +22,7 @@ def save_video_to_db(file_path):
     connection = mysql.connector.connect(
         host="ec2-51-21-134-92.eu-north-1.compute.amazonaws.com",  
         user="root",
-        password="Aoifetara02*", 
+        password=os.getenv("MYSQL_PASSWORD"), 
         database="babysitter"
     )
     cursor = connection.cursor()
@@ -59,7 +59,7 @@ def download_video_from_pi(video_path):
     except requests.exceptions.RequestException as e:
         print(f"Error downloading video: {e}")
 
-        
+
 # PubNub listener to handle video-ready notifications
 class VideoListener(SubscribeListener):
     def message(self, pubnub, message):
