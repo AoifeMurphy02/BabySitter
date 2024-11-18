@@ -1,0 +1,288 @@
+body {
+    background-color: #ffffff;
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+.container {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 15px;
+}
+
+
+.card {
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    padding: 30px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+
+.card-body {
+    padding: 0;
+}
+
+.card-title {
+    text-align: left;
+    font-size: 2em;
+    margin-left: 0; 
+    font-weight: bold;
+}
+
+.custom-input {
+    background-color: #F9F9F9; 
+    border: 3px solid #92929d; 
+    border-radius: 5px;
+    padding: 10px; 
+    font-size: 1rem; 
+    color: #333;
+}
+
+.custom-input:focus {
+    background-color: #F9F9F9; 
+    border-color: #92929d; 
+    outline: none; 
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
+}
+
+.or-divider {
+    display: flex;
+    align-items: center;
+    margin: 20px 0;
+}
+.or-divider::before,
+.or-divider::after {
+    content: "";
+    flex: 1;
+    height: 1px;
+    background: #ddd;
+}
+.or-divider span {
+    margin: 0 15px;
+    color: #888;
+}
+.google-login {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #ddd;
+    padding: 10px;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    text-decoration: none;
+    color: #555;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+.google-login:hover {
+    background-color: #f1f1f1;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.google-login img {
+    height: 20px;
+    margin-right: 10px;
+}
+  
+
+
+.form-label {
+    font-size: 14px;
+    color: #777;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #92929d;
+    box-shadow: none;
+    transition: border-color 0.3s ease;
+
+}
+
+.form-control::placeholder {
+    color: #6C5589;
+    font-style: italic;
+    opacity: 0.8;
+}
+
+.form-control:focus::placeholder {
+    color: #4e3c64; 
+    opacity: 0.6;
+}
+
+.btn-success {
+    font-weight: 600;
+    padding: 10px;
+    background-color: #B795E4; 
+    border-color: #B795E4;
+    color: white; 
+}
+
+.btn-success:hover {
+    background-color: #9C7EC0; 
+    border-color: #9C7EC0; 
+    color: white; 
+}
+
+.btn {
+    font-weight: 600;
+    padding: 10px;
+    background-color: #B795E4;
+    border-color: #B795E4;
+    color: white;
+}
+
+.btn:hover {
+    background-color: #9C7EC0; 
+    border-color: #9C7EC0;
+    color: white;
+}
+
+.account-prompt a {
+    color: #4e3c64;
+    text-decoration: none;
+    font-style: italic;
+}
+
+.account-prompt a:hover {
+    text-decoration: underline;
+}
+
+.input-container {
+    position: relative;
+    width: 100%;
+    fill: #4e3c64; 
+    color: #4e3c64;
+}
+
+.input-container svg {
+    position: absolute;
+    left: 10px;  
+    top: 50%;
+    transform: translateY(-50%); 
+    pointer-events: none;
+    fill: #4e3c64; 
+    color: #4e3c64;
+}
+
+.input-container input {
+    padding-left: 30px; 
+    width: 100%;
+    fill: #4e3c64; 
+    color: #4e3c64;
+}
+
+
+.w-100 {
+    width: 100%;
+    display: block;
+    
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        margin-top: 30px;
+        padding: 10px;
+    }
+
+    .card {
+        padding: 20px;
+    }
+
+    .card-title {
+        font-size: 2em;
+    }
+}
+
+@media (max-width: 480px) {
+    .card {
+        padding: 15px;
+    }
+
+    .card-title {
+        font-size: 2em;
+        padding: 5px;
+    }
+
+    .form-label {
+        font-size: 12px;
+    }
+    .btn-success {
+        font-weight: 600;
+        padding: 10px;
+        background-color: #B795E4; 
+        border-color: #B795E4; 
+        color: white; 
+    }
+    
+    .btn-success:hover {
+        background-color: #9C7EC0; 
+        border-color: #9C7EC0; 
+        color: white; 
+    }
+    
+    .btn {
+        font-weight: 600;
+        padding: 10px;
+        background-color: #B795E4;
+        border-color: #B795E4;
+        color: white;
+    }
+    
+    .btn:hover {
+        background-color: #9C7EC0;
+        border-color: #9C7EC0;
+        color: white;
+    }
+    
+
+    
+.form-control::placeholder {
+    color: #4e3c64;
+    font-style: italic;
+    opacity: 0.8;
+}
+
+
+    p {
+        font-size: 12px;
+    }
+
+    .btn-google {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #4285F4;
+        color: white;
+        font-weight: bold;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        text-decoration: none;
+        transition: background-color 0.3s;
+      }
+      
+      .btn-google img {
+        vertical-align: middle;
+      }
+      
+      .btn-google:hover {
+        background-color: #3367D6;
+      }
+      
+      .btn-google:active {
+        background-color: #2A56C6;
+      }
+      
+}
