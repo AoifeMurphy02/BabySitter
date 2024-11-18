@@ -164,7 +164,50 @@
     .grid-button3 { background-color: #f2a0d4; } 
     .grid-button4 { background-color: #ebc888; } 
 
+    .blocknav {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 20px;
+    }
+    
+   /* Style for the first button */
+.blocknav button {
+    flex: 1;
+    font-size: 14px;
+    padding: 10px 10px;
+    border: none;
+    border-radius: 8px;
+    background-color: #FF3B30;
+    color: black;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
 
+.blocknav button.button1 {
+    background-color: #007BFF; 
+}
+
+
+.blocknav button:hover {
+    background-color: #ffffff;
+    border-color: #111;
+    color: #111;
+    border: 1px solid #111;
+}
+
+.blocknav button.button1:hover {
+    background-color: #ffffff;
+    border-color: #111;
+    color: #111;
+    border: 1px solid #111;
+}
+
+.blocknav svg {
+    margin-right: 3px;
+    width: 28px;
+    height: 28px;
+}
 
 
 
