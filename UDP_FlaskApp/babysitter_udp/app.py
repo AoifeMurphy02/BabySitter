@@ -64,7 +64,9 @@ REGISTRANTS = {}
 
 @app.route("/", methods=["GET","POST"])
 def index():
-    return render_template("index.html", sports=SPORTS)
+    video_url = "http://192.168.183.28:8000/video1.mp4"  
+    return render_template("index.html", sports=SPORTS, video_url=video_url)
+
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -208,6 +210,9 @@ def sound():
    
 
 
+
+
+
 # publish message to pubnub
 
 @app.route('/publish', methods=['POST'])
@@ -229,6 +234,11 @@ def publish_message():
             return jsonify({'status': 'error', 'message': str(e)}), 500
     else:
         return jsonify({'status': 'error', 'message': 'No message provided'}), 400
+
+
+
+ # front end - meghan
+
 
 
     # return render_template("success.html")

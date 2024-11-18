@@ -1,0 +1,260 @@
+
+.headerchild
+{
+    background-color: #B795E4;
+    color: white;
+    height: 10vh;
+    
+}
+
+
+.headerchild h1
+{
+    padding: 15px;
+    display: flex;
+    justify-content: center;
+    font-weight: bold;
+
+}
+
+.navbar {
+    position: fixed; 
+    bottom: 0;
+    left: 0; 
+    right: 0;
+    display: flex;
+    justify-content: space-around; 
+    align-items: center;
+    background-color: #fff;
+    border-top-left-radius: 20px; 
+    border-top-right-radius: 20px;
+    padding: 10px; 
+    box-shadow: 0 -1px 5px rgba(0, 0, 0, 0.5); 
+    z-index: 1000; 
+}
+
+
+
+.homenav-item {
+    background-color: #B795E4; 
+    border-radius: 50%; 
+    color: white;
+    padding: 10px; 
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
+    margin-top: -20px;
+    position: relative; 
+    z-index: 1; 
+}
+
+
+
+.homenav-item svg {
+    width: 25px;
+    height: 25px; 
+}
+
+.nav-item svg {
+    width: 22px; 
+    height: 22px; 
+}
+
+
+
+
+ul {
+    list-style-type: none; 
+    padding: 0;
+    margin: 0; 
+    display: flex; 
+    
+}
+
+.nav-item {
+    margin: 0 30px; 
+
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        flex-direction: column;
+        height: auto; 
+        padding: 5px; 
+    }
+
+    .nav-item {
+        margin: 10px;
+    }
+
+    .homenav-item {
+        margin-top: 0; /
+    }
+
+    .ul {
+        margin-left: 5px
+    }
+}
+
+
+/* footer */
+
+footer {
+    position: relative; 
+    bottom: 0;
+    width: 100%;
+    background-color: #fff; 
+    color: #000; 
+    padding: 40px; 
+    z-index: 1000; 
+}
+
+
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    padding-left: 10%;
+}
+
+.footer-section {
+    width: 30%;
+}
+
+.footer-section h3 {
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: #B795E4;
+}
+
+.footer-section ul {
+    list-style-type: none;
+    padding: 0;
+    color: #876aad;
+}
+
+.footer-section ul li {
+    margin-bottom: 10px;
+    font-size: 16px; 
+    color: #876aad;
+}
+
+.footer-section form {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-section form input[type="email"] {
+    margin-bottom: 15px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px; 
+}
+
+.footer-section form button[type="submit"] {
+    background-color: #B795E4;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 18px; 
+}
+
+.footer-section form button[type="submit"]:hover {
+    background-color: #B795E4;
+}
+
+
+/* Media query */
+@media (max-width: 768px) {
+    .footer-container {
+      flex-direction: column;
+    }
+  
+    .footer-section {
+      width: 100%;
+      margin-bottom: 20px;
+    }
+  }
+  
+
+  /* index html page */
+
+  .responsive-img {
+    width: 100%;  
+    height: auto; 
+    border-radius: 30px;
+}
+
+h4
+{
+    font-size: 20px;
+    margin-top: 20px;
+}
+
+.block2 {
+    background-color: #f0f0f0;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+
+.statusboardlist {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    justify-content: center;
+
+
+}
+
+.statusboard2 {
+
+    
+    margin-top: 20px; 
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-align: center;
+    justify-content: center;
+}
+
+.statusboard2 h4
+{
+    font-size: 20px;
+    margin-top: 20px;
+}
+
+
+.statusIcons {
+    display: flex;
+    gap: 10px;
+}
+
+.statusIcon {
+    cursor: pointer;
+}
+
+.statusboard svg, .statusIcons img {
+    width: 32px;
+    height: 32px;
+    fill: #333;
+}
+
+.statusboard2 h4 {
+    margin: 0;
+    font-size: 16px;
+}
+
+#statusText {
+    margin-left: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+
