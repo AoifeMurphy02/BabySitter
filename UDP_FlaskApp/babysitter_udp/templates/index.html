@@ -1,11 +1,11 @@
 {% extends "layout.html" %}
 {% block body %}
     <div class="container mt-5">
-        <h1 class="mb-4">Welcome Back</h1>
+        <h1 class="mb-4welcome" >Welcome Back, {{ guardian_name1 }}</h1>
         <form action="/register" method="POST">
             <div class="mb-3">
                 <div class="Dashboard">  
-                    <h4>Eve</h4>
+                    <h4>{{ child_name }}</h4>
                     <!-- <img src="{{ url_for('static', filename='images/pretty.png') }}" alt="Pretty Image" class="responsive-img"> -->
                     <video controls autoplay style="width: 100%; height: auto; max-height: 60vh;">
                         <source src="{{ video_url }}" type="video/mp4">
@@ -41,7 +41,7 @@
                     </li>
                 </ul>
                 <div class="statusboard2">
-                    <h4>Eve is...</h4>
+                    <h4>{{ child_name }} is...</h4>
                     <span id="statusText">Active</span>
                     <div class="statusIcons">
                         <div class="statusIcon active" data-status="Active">
@@ -58,9 +58,26 @@
                 
                
             </div>
-            <div class="mb-3">
-              
+            <h4>History</h4>
+            <div class="HistoryBlock">
+                <div class="HistoryContent">
+                    <img src="{{ url_for('static', filename='images/pretty.png') }}" alt="Pretty Image" class="responsive-img">
+                    <div class="Text">
+                       
+                        <h4>20:44</h4>
+                        <p>{{ child_name }}: Motion Detected</p>
+                    </div>
+                </div>
             </div>
+            <div class="block3">
+                <button class="grid-button">Sleep</button>
+                <button class="grid-button2">Activity</button>
+                <button class="grid-button3">Temperature</button>
+                <button class="grid-button4">History</button>
+            </div>
+            
+
+            
         </form>
     </div>
 {% endblock %}

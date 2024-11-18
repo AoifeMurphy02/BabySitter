@@ -62,10 +62,17 @@ SOUND_URL = "http://192.168.183.28:8000/sound1.wav"
 SPORTS = ["Basketball", "Badminton","Volleyball"]
 REGISTRANTS = {}
 
+
+guardian_name1 = "John"
+guardian_name2 = "Jane"
+child_name = "Meghan"
+
 @app.route("/", methods=["GET","POST"])
 def index():
+    child_name
+    guardian_name1
     video_url = "http://192.168.183.28:8000/video1.mp4"  
-    return render_template("index.html", sports=SPORTS, video_url=video_url)
+    return render_template("index.html", sports=SPORTS, video_url=video_url,  child_name=child_name, guardian_name1=guardian_name1, guardian_name2=guardian_name2)
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -237,7 +244,6 @@ def publish_message():
 
 
 
- # front end - meghan
 
 
 

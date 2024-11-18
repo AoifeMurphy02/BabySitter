@@ -1,21 +1,27 @@
 
+
+
 .headerchild
 {
     background-color: #B795E4;
-    color: white;
-    height: 10vh;
+    color: black;
     
 }
 
-
-.headerchild h1
-{
-    padding: 15px;
+.headerchild h1 {
+    padding: 20px;
     display: flex;
+    align-items: center; 
     justify-content: center;
-    font-weight: bold;
-
+    gap: 8px;
+    line-height: 1.2;
+    color: black;
 }
+
+.headerchild h1 svg {
+    margin-top: 2px;
+}
+
 
 .navbar {
     position: fixed; 
@@ -46,14 +52,25 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
     margin-top: -20px;
     position: relative; 
+    text-decoration: none;
     z-index: 1; 
 }
 
+.homenav-item a {
+    color: white; 
+    text-decoration: none; 
+}
+
+.homenav-item a:hover {
+    color: white;
+    text-decoration: none;
+}
 
 
 .homenav-item svg {
-    width: 25px;
-    height: 25px; 
+    width: 30px;
+    height: 30px; 
+    text-decoration: none;
 }
 
 .nav-item svg {
@@ -61,6 +78,143 @@
     height: 22px; 
 }
 
+
+.googleprofileicon {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+    cursor: pointer; 
+}
+
+/* dash css */
+
+.HistoryBlock {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 10px;
+    margin: 15px auto;
+    border: 2px solid #ccc; 
+    border-radius: 8px;
+    border-color: #876aad;
+    max-width: 600px; 
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+}
+
+.HistoryContent {
+    display: flex;
+    align-items: center;
+    gap: 10px; 
+    width: 100%;
+}
+
+.Number {
+    font-size: 20px; 
+    font-weight: bold;
+    color: #444;
+    padding: 5px; 
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px; 
+    height: 40px;
+    flex-shrink: 0;
+}
+
+.responsive-img {
+    width: 70px; 
+    height: 70px;
+    border-radius: 50%; 
+    object-fit: cover;
+    flex-shrink: 0; 
+}
+
+@media (max-width: 600px) {
+    .block3 {
+        padding: 20px;
+        display: grid; 
+        grid-template-columns: repeat(2, 1fr); 
+        gap: 10px;
+        justify-content: center; 
+        
+    }
+
+    .grid-button, .grid-button2, .grid-button3, .grid-button4 {
+        font-size: 14px;
+        padding: 0; /* Remove default padding */
+        border-radius: 8px; /* Slightly rounded corners */
+        /* background-color: #876aad; */
+        border: 0px solid white;
+        color: #111;
+        width: 100%; /* Full width within the grid cell */
+        aspect-ratio: 1; /* Ensures the button is square */
+        display: flex;
+        justify-content: center; /* Center text horizontally */
+        align-items: center; /* Center text vertically */
+        font-weight: bold; /* Bold text */
+    }    
+
+    .grid-button { background-color: #876aad; } 
+.grid-button2 { background-color: #97d1de; } 
+.grid-button3 { background-color: #f2a0d4; } 
+.grid-button4 { background-color: #ebc888; } 
+}
+
+
+.Text {
+    flex: 1; 
+}
+
+.Text h4 {
+    margin: 0;
+    font-size: 16px; 
+    color: #333;
+}
+
+.Text p {
+    margin: 5px 0 0;
+    color: #666;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+    .HistoryBlock {
+        max-width: 100%; 
+        padding: 8px; 
+    }
+
+    .HistoryContent {
+        gap: 8px; 
+    }
+
+    .responsive-img {
+        width: 50px; 
+        height: 50px;
+    }
+
+    .Number {
+        width: 30px; 
+        height: 30px;
+        font-size: 14px;
+    }
+
+    .Text h4 {
+        font-size: 14px; 
+    }
+
+    .Text p {
+        font-size: 11px; 
+    }
+}
 
 
 
@@ -183,7 +337,7 @@ footer {
   /* index html page */
 
   .responsive-img {
-    width: 100%;  
+    width: 150px;  
     height: auto; 
     border-radius: 30px;
 }
@@ -258,3 +412,9 @@ h4
 }
 
 
+#mb-4welcome {
+    margin-top: 20px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #333;
+}
