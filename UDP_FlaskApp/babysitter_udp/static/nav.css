@@ -148,24 +148,21 @@
 
     .grid-button, .grid-button2, .grid-button3, .grid-button4 {
         font-size: 14px;
-        padding: 0; /* Remove default padding */
-        border-radius: 8px; /* Slightly rounded corners */
-        /* background-color: #876aad; */
+        padding: 0;
+        border-radius: 8px; 
         border: 0px solid white;
         color: #111;
-        width: 100%; /* Full width within the grid cell */
-        aspect-ratio: 1; /* Ensures the button is square */
+        width: 100%;
+        aspect-ratio: 1; 
         display: flex;
-        justify-content: center; /* Center text horizontally */
-        align-items: center; /* Center text vertically */
-        font-weight: bold; /* Bold text */
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
     }    
 
-    .grid-button { background-color: #876aad; } 
-.grid-button2 { background-color: #97d1de; } 
-.grid-button3 { background-color: #f2a0d4; } 
-.grid-button4 { background-color: #ebc888; } 
-}
+
+
+
 
 
 .Text {
