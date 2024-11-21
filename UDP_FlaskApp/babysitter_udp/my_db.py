@@ -35,12 +35,12 @@ def delete_all_users():
                 print("Delete failed " +str(e))
                 db.session.rollback()
 
-def get_user_row_if_exists(user_id):
+def get_user_row_if_exists(id):
     user_row = BabySitterLogin.query.filter_by(user_id=user_id).first()
     if user_row is not None:
         return user_row
     else:
-        print(f"The user with id {user_id} does not exist")
+        print(f"The user with id {id} does not exist")
         return False
 
 
@@ -49,3 +49,13 @@ def validate_user(email, password):
     if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
         return {"status": "success", "message": "Login successful", "user": user}
     return {"status": "fail", "message": "Invalid email or password"}
+
+def user_logout(id):
+        row = get_user_row_if_exists(id)
+        if row is not False:
+         db.session.commit()
+        
+def view_all():
+    row = BabySitterLogin.query.all()
+    for n in range(0, len(row)):
+        print(f"{row[n].id} | {row[n].name} | {row[n].user_id} | {row[n].token} | {row[n].access_level}")
