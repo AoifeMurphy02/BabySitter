@@ -59,3 +59,19 @@ def view_all():
     row = BabySitterLogin.query.all()
     for n in range(0, len(row)):
         print(f"{row[n].id} | {row[n].name} | {row[n].user_id} | {row[n].token} | {row[n].access_level}")
+
+def get_all_logged_in_users():
+    row = BabySitterLogin.query.filter_by(login=1).all()
+    baby_sitter_records = {"users" : []}
+    for n in range(0, len(row)):
+        if row[n].access_level == 1:
+            read = "checked"
+            write = "unchecked"
+        elif row[n].access_level == 2:
+            read = "checked"
+            write = "checked"
+        else:
+            read = "unchecked"
+            write = "unchecked"
+        baby_sitter_records["users"].append([row[n].name, row[n].user_id, read, write])
+    return baby_sitter_records
