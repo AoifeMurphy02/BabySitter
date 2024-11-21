@@ -80,7 +80,6 @@ def signup():
     if request.method == 'POST':
         user_name = request.form['username']
         password = request.form['password']
-        name = request.form['name']
         email = request.form['email']
         
         # Check if email is valid
@@ -102,7 +101,7 @@ def signup():
             return render_template('signup.html')
 
         # Save user to database
-        my_db.add_babysitter(user_name=user_name, password=hashed_password, name=name, email=email)
+        my_db.add_babysitter(user_name=user_name, name='', password=hashed_password, email=email)
         flash('You have successfully signed up!', 'success')
         return redirect(url_for('login'))
     return render_template('signup.html')
@@ -117,6 +116,8 @@ def login():
         
         if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
             session['email'] = user.email
+            session['name'] = user.name
+            session['user_name'] = user.user_name
             flash('Login successful!', 'success')
             return redirect(url_for('loggedin'))
         else:
@@ -166,10 +167,22 @@ def google_callback():
     if user_info.get("email_verified"):
         unique_id = user_info["sub"]
         users_email = user_info["email"]
-        session['username'] = users_email
+        users_name = user_info.get("name", "Google User")
+        
+        # Check if user already exists in the database
+        existing_user = my_db.get_babysitter_by_email(users_email)
+        if not existing_user:
+            # Create a new user entry if it is their first time logging in
+            my_db.add_babysitter(user_name=unique_id, password="", name=users_name, email=users_email)
+            flash('Account created successfully with Google login!', 'success')
+        
+        session['email'] = users_email
+        session['user_name'] = unique_id
+        session['name'] = users_name
         flash('Login successful!', 'success')
         return redirect(url_for('loggedin'))
     else:
+        flash('User email not available or not verified by Google.', 'danger')
         return redirect(url_for('login'))
 
 
@@ -177,7 +190,7 @@ def google_callback():
 @app.route('/loggedin')
 def loggedin():
     if 'email' in session:
-        return f'Welcome {session["email"]}!'
+        return f'Email:{session["email"]}, Username:{session["user_name"]}, Name:{session["name"]}!'
     else:
         return redirect(url_for('login'))
     

@@ -1,13 +1,41 @@
 
-
-
-.headerchild
+body
 {
-    background-color: #B795E4;
-    color: black;
-    
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
+
+.headerchild {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    padding: 10px 20px;
+    background-color: #B795E4;
+    color: #ffffff;
+}
+
+.menu-icon {
+    width: 26px;
+    height: 26px;
+    cursor: pointer;
+}
+
+header h1 {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+    text-align: center; 
+    flex-grow: 1; 
+    display: flex;
+    align-items: center;
+    justify-content: center; 
+}
+
+header h1 svg {
+    margin-left: 10px;
+    cursor: pointer;
+}
+/* 
 .headerchild h1 {
     padding: 20px;
     display: flex;
@@ -15,12 +43,19 @@
     justify-content: center;
     gap: 8px;
     line-height: 1.2;
-    color: black;
+    color: white;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 .headerchild h1 svg {
     margin-top: 2px;
 }
+
+.menu-icon {
+    margin-right: 10px; 
+    cursor: pointer;    
+    color: white
+} */
 
 
 .navbar {
@@ -76,8 +111,13 @@
 .nav-item svg {
     width: 22px; 
     height: 22px; 
+    text-decoration: none;
+    color: #111;
 }
-
+.nav-item a {
+    text-decoration: none; 
+    color: #111;
+}
 
 .googleprofileicon {
     position: absolute;
@@ -100,8 +140,7 @@
     padding: 10px;
     margin: 15px auto;
     border: 2px solid #ccc; 
-    border-radius: 8px;
-    border-color: #876aad;
+    border-radius: 20px;
     max-width: 600px; 
     background-color: #f9f9f9;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
@@ -149,7 +188,7 @@
     .grid-button, .grid-button2, .grid-button3, .grid-button4 {
         font-size: 14px;
         padding: 0;
-        border-radius: 8px; 
+        border-radius: 20px; 
         border: 0px solid white;
         color: #111;
         width: 100%;
@@ -176,28 +215,28 @@
     flex: 1;
     font-size: 14px;
     padding: 10px 10px;
-    border: none;
+    border: 1px solid #111;
     border-radius: 8px;
-    background-color: #FF3B30;
+    background-color: transparent;
     color: black;
     cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
 .blocknav button.button1 {
-    background-color: #007BFF; 
+    background-color: #ffffff; 
 }
 
 
 .blocknav button:hover {
-    background-color: #ffffff;
+    background-color: #FF3B30;
     border-color: #111;
     color: #111;
     border: 1px solid #111;
 }
 
 .blocknav button.button1:hover {
-    background-color: #ffffff;
+    background-color: #007BFF;
     border-color: #111;
     color: #111;
     border: 1px solid #111;
@@ -271,6 +310,7 @@ ul {
 
 .nav-item {
     margin: 0 30px; 
+    text-decoration: none;
 
 }
 
@@ -283,6 +323,7 @@ ul {
 
     .nav-item {
         margin: 10px;
+        text-decoration: none;
     }
 
     .homenav-item {
@@ -394,7 +435,7 @@ h4
 .block2 {
     background-color: #f0f0f0;
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 20px;
 }
 
 
@@ -456,7 +497,7 @@ h4
 
 
 #mb-4welcome {
-    margin-top: 20px;
+    margin-top: 10px;
     font-size: 15px;
     font-weight: bold;
     color: #333;
