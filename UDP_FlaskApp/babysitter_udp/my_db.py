@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+import bcrypt  #for hashing and verifying passwords
 
 db = SQLAlchemy()
 
@@ -14,7 +15,7 @@ class BabySitterLogin(db.Model):
 
     def __init__(self, user_name, password, name, email):
         self.user_name = user_name
-        self.password = password
+        self.password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
         self.name = name
         self.email = email
 
@@ -25,3 +26,26 @@ def add_babysitter(user_name, password, name, email):
 
 def get_babysitter_by_email(email):
         return BabySitterLogin.query.filter_by(email=email).first()
+
+def delete_all_users():
+        try:
+                db.session.query(BabySitterLogin).delete()
+                db.session.commit()
+        except Exception as e:
+                print("Delete failed " +str(e))
+                db.session.rollback()
+
+def get_user_row_if_exists(user_id):
+    user_row = BabySitterLogin.query.filter_by(user_id=user_id).first()
+    if user_row is not None:
+        return user_row
+    else:
+        print(f"The user with id {user_id} does not exist")
+        return False
+
+
+def validate_user(email, password):
+    user = BabySitterLogin.query.filter_by(email=email).first()
+    if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+        return {"status": "success", "message": "Login successful", "user": user}
+    return {"status": "fail", "message": "Invalid email or password"}
