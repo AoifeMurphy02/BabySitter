@@ -222,14 +222,30 @@ def register():
 
 @app.route("/video")
 def video():
-    return render_template("video.html", video_url=VIDEO_URL)
+    child_name
+    return render_template("video.html", video_url=VIDEO_URL, child_name=child_name)
 @app.route("/sound")
 def sound():
     print(SOUND_URL) 
     return render_template("sound.html", sound_url=SOUND_URL)
-   
 
 
+@app.route("/history")
+def history():
+    child_name
+    return render_template("history.html", child_name=child_name)
+
+
+@app.route("/user")
+def user():
+    child_name
+    return render_template("user.html", child_name=child_name)
+
+
+@app.route("/settings")
+def settings():
+    child_name
+    return render_template("settings.html", child_name=child_name)
 
 
 

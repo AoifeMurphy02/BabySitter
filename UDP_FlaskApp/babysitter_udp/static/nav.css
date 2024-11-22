@@ -1,6 +1,7 @@
 
 body
 {
+    background-color: #e1daeb;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
@@ -12,6 +13,8 @@ body
     padding: 10px 20px;
     background-color: #B795E4;
     color: #ffffff;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
 }
 
 .menu-icon {
@@ -77,7 +80,7 @@ header h1 svg {
 
 
 .homenav-item {
-    background-color: #B795E4; 
+    background-color: #876aad; 
     border-radius: 50%; 
     color: white;
     padding: 10px; 
@@ -224,7 +227,7 @@ header h1 svg {
 }
 
 .blocknav button.button1 {
-    background-color: #ffffff; 
+    background-color: transparent; 
 }
 
 
@@ -333,93 +336,35 @@ ul {
     .ul {
         margin-left: 5px
     }
+
+    .containerindex
+{   margin-bottom: 20%;
+    padding: 8%;
+}
+}
+
+.containerindex
+{
+    padding: 8%;
+ background-color: #ffffff; /* rgba(154, 154, 154, 0.8) */
+ border-radius: 20px;
+ margin-top: 30px; 
 }
 
 
-/* footer */
+.videocontainer
+{
 
-footer {
-    position: relative; 
-    bottom: 0;
-    width: 100%;
-    background-color: #fff; 
-    color: #000; 
-    padding: 40px; 
-    z-index: 1000; 
+    margin-bottom: 20%;
+    padding: 8%;
 }
 
-
-
-.footer-container {
-    display: flex;
-    justify-content: space-between;
-    padding-left: 10%;
-}
-
-.footer-section {
-    width: 30%;
-}
-
-.footer-section h3 {
-    font-size: 24px;
-    margin-bottom: 15px;
-    color: #B795E4;
-}
-
-.footer-section ul {
-    list-style-type: none;
-    padding: 0;
-    color: #876aad;
-}
-
-.footer-section ul li {
-    margin-bottom: 10px;
-    font-size: 16px; 
-    color: #876aad;
-}
-
-.footer-section form {
-    display: flex;
-    flex-direction: column;
-}
-
-.footer-section form input[type="email"] {
-    margin-bottom: 15px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px; 
-}
-
-.footer-section form button[type="submit"] {
-    background-color: #B795E4;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 18px; 
-}
-
-.footer-section form button[type="submit"]:hover {
-    background-color: #B795E4;
-}
-
-
-/* Media query */
-@media (max-width: 768px) {
-    .footer-container {
-      flex-direction: column;
-    }
-  
-    .footer-section {
-      width: 100%;
-      margin-bottom: 20px;
-    }
-  }
-  
-
+.bodycon
+{
+   margin-bottom: 20px;
+   padding: 10px;
   /* index html page */
-
+}
   .responsive-img {
     width: 150px;  
     height: auto; 

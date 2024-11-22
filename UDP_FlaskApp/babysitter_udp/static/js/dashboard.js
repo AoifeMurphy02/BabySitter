@@ -1,4 +1,3 @@
-
 if (window.location.pathname === '/dashboard') {
 document.addEventListener('DOMContentLoaded', function () {
     const muteToggle = document.getElementById('muteToggle');
