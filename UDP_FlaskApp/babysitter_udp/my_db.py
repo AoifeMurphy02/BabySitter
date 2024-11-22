@@ -36,7 +36,7 @@ def delete_all_users():
                 db.session.rollback()
 
 def get_user_row_if_exists(id):
-    user_row = BabySitterLogin.query.filter_by(user_id=user_id).first()
+    user_row = BabySitterLogin.query.filter_by(user_id=id).first()
     if user_row is not None:
         return user_row
     else:
