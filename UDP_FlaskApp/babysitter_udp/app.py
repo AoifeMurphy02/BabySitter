@@ -39,7 +39,7 @@ client = WebApplicationClient(GOOGLE_CLIENT_ID)
 pnconfig = PNConfiguration()
 pnconfig.subscribe_key =os.getenv("PUBNUB_SUBSCRIBE_KEY")
 pnconfig.publish_key =os.getenv("PUBNUB_PUBLISH_KEY")
-pnconfig.secret_key = 'sec-c-YTMzYWYyYjctNmY0MS00NTE2LWE2OWMtMGU5NjYzYTg2Nzk3'  
+pnconfig.secret_key =os.getenv("PUBNUB_SECRET")   
 pnconfig.uuid =os.getenv("PUBNUB_NAME") 
 
 pubnub =PubNub(pnconfig)
