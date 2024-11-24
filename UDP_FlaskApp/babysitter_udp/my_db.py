@@ -19,6 +19,9 @@ class BabySitterLogin(db.Model):
         self.name = name
         self.email = email
 
+def setup_database():
+        db.create_all()        
+
 def add_babysitter(user_name, password, name, email):
         new_babysitter = BabySitterLogin(user_name=user_name, password=password, name=name, email=email)
         db.session.add(new_babysitter)

@@ -131,8 +131,7 @@ def signup():
         if not re.fullmatch(r'^(?=.*[A-Z])(?=.*\d).{8,}$', password):
             flash('Password must be at least 8 characters long, contain at least one digit, and one uppercase letter.', 'danger')
             return render_template('signup.html')
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-
+        
         # Check if email already exists
         existing_user = my_db.get_babysitter_by_email(email)
         if existing_user:
@@ -140,7 +139,7 @@ def signup():
             return render_template('signup.html')
 
         # Save user to database
-        my_db.add_babysitter(user_name=user_name, name='', password=hashed_password, email=email)
+        my_db.add_babysitter(user_name=user_name, name='', password=password, email=email)
         flash('You have successfully signed up!', 'success')
         return redirect(url_for('login'))
     return render_template('signup.html')
