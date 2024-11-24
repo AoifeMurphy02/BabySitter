@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-import bcrypt  #for hashing and verifying passwords
+import bcrypt  #hashing and verifying passwords
 
 db = SQLAlchemy()
 
