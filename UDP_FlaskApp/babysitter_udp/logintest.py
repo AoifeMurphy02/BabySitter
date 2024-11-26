@@ -14,6 +14,7 @@ db.init_app(app)
 with app.app_context():
     db.create_all()
 
+
 def test_add_babysitter():
     user_name = input("Enter username for new babysitter: ")
     password = input("Enter password: ")
