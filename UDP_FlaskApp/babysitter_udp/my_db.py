@@ -79,6 +79,7 @@ def get_all_logged_in_users():
         baby_sitter_records["users"].append([row[n].name, row[n].user_id, read, write])
     return baby_sitter_records
 
+
 class BabySitterData():
        __tablename__ = 'baby_data'
        id = db.Column(db.Integer, primary_key=True, nullable=False)
@@ -86,8 +87,8 @@ class BabySitterData():
        sound_pitch = db.Column(db.Float,nullable=True)
        temperature = db.Column(db.Float,nullable=True)
        humidity = db.Column(db.Float,nullable=True)
-       camera_feed_path= db.Column(db.Float,nullable=True)
-       audio= db.Column(db.Float,nullable=True)
+       camera_feed_path= db.Column(db.String,nullable=True)
+       audio= db.Column(db.String,nullable=True)
 
        def __init__(self, sound_pitch, temperature, humidity, camera_feed_path, audio ):
         self.sound_pitch = sound_pitch
@@ -101,3 +102,15 @@ def add_baby_data(sound_pitch, temperature, humidity, camera_feed_path, audio):
         new_baby_data =  BabySitterData(sound_pitch = sound_pitch, temperature = temperature, humidity = humidity, camera_feed_path =camera_feed_path, audio = audio)
         db.session.add(new_baby_data)
         db.session.commit()
+
+def get_baby_temperature(time):
+    result = BabySitterData.query.filter_by(time=time).first()
+    if result:
+        return result.temperature
+    return None 
+
+def get_video_record(time):
+    result = BabySitterData.query.filter_by(time=time).first()
+    if result:
+        return result.camera_feed_path
+    return None 

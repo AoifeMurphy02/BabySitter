@@ -266,6 +266,7 @@ def video():
     return render_template("video.html", video_url=VIDEO_URL, child_name=child_name)
     print(VIDEO_URL) 
     return render_template("video.html", video_url=VIDEO_URL)
+
 @app.route("/sound")
 def sound():
     print(SOUND_URL) 
