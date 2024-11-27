@@ -245,8 +245,43 @@ body {
         border-color: #9C7EC0;
         color: white;
     }
-    
 
+    
+.dropdown-content a ,.control-button a
+{
+    color: white;
+    padding: 25px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+   
+}
+
+.controlcenter
+{
+    border-radius: 20px;
+    padding: 5px;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+    
+/* 
+    background-color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 100px;
+    text-decoration: none;
+    background-color: #B795E4;
+    color: white;
+    border-radius: 5px;
+    padding: 25px;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+    position: relative;
+    text-decoration: none;
+    z-index: 1; */ */
     
 .form-control::placeholder {
     color: #4e3c64;

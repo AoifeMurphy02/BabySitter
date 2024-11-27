@@ -10,10 +10,12 @@ import my_db
 db= my_db.db
 
 
-
 app = flask = Flask(__name__)
 load_dotenv()
 app.secret_key = os.getenv('SECRET_KEY')
+os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
+
+
 
 #app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('MYSQL_HOST')
 app.config['SQLALCHEMY_DATABASE_URI'] = (
@@ -131,6 +133,10 @@ def google_login():
 @app.route('/login/google/callback')
 def google_callback():
     code = request.args.get("code")
+    if not code:
+        print("Authorization failed. No code received.")
+        return "Authorization failed", 400
+    print("Received code:", code)
 
     google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
     token_endpoint = google_provider_cfg["token_endpoint"]

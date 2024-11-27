@@ -7,12 +7,40 @@ muteToggle.addEventListener('click', function() {
     unmuteIcon.style.display = 'block';
 });
 
-unmuteIcon.addEventListener('click', function() {
-    unmuteIcon.style.display = 'none';
-    muteToggle.style.display = 'block';
+   
+    unmuteIcon.addEventListener('click', function () {
+        if (video) {
+            video.muted = false;
+            unmuteIcon.style.display = 'none'; 
+            muteToggle.style.display = 'block';
+        } else {
+            console.error("Video element not found");
+        }
+    });
+
+// for hiding status elements when not active:
+
+document.addEventListener('DOMContentLoaded', function () {
+    const currentStatus = "Active";
+    const statusText = document.getElementById('statusText');
+    const statusIcons = document.querySelectorAll('.statusIcon');
+
+    
+    
+    statusText.textContent = currentStatus;
+
+    statusIcons.forEach(icon => {
+        if (icon.getAttribute('data-status') === currentStatus) {
+            icon.style.display = 'block'; 
+        } else {
+            icon.style.display = 'none'; 
+        }
+    });
 });
 
 
-//testing
 
-
+function toggleMenu() {
+    const menu = document.getElementById("dropdown-menu");
+    menu.style.display = menu.style.display === "block" ? "none" : "block";
+}
