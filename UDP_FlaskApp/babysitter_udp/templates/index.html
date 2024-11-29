@@ -1,14 +1,19 @@
 {% extends "layout.html" %}
 {% block body %}
-    <div class="container mt-5">
-        <h1 class="mb-4">Welcome Back</h1>
+<div class="bodycon">
+    <div class="containerindex">
+        <h2 class="mb-4welcome" >Welcome Back, {{ guardian_name1 }}</h2>
         <form action="/register" method="POST">
             <div class="mb-3">
                 <div class="Dashboard">  
-                    <h4>Eve</h4>
-                    <!-- <img src="{{ url_for('static', filename='images/pretty.png') }}" alt="Pretty Image" class="responsive-img"> -->
-                    <video controls autoplay style="width: 100%; height: auto; max-height: 60vh;">
+                    <h4>{{ child_name }}</h4>
+                    <!-- <video controls autoplay style="width: 100%; height: auto; max-height: 60vh;">
                         <source src="{{ video_url }}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video> -->
+
+                    <video id="myVideo" controls autoplay style="width: 100%; height: auto; max-height: 60vh;">
+                        <source src="{{ url_for('static', filename='images/babyvideodemo.mp4') }}" type="video/mp4" class="responsive-img">
                         Your browser does not support the video tag.
                     </video>
                 </div>
@@ -19,18 +24,22 @@
                 <ul class="statusboardlist">
                     <li class="statusboard">
                         <div id="muteToggle" style="cursor: pointer;">
+                            <!-- Mute Icon -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-mic-mute-fill" viewBox="0 0 16 16">
                                 <path d="M13 8c0 .564-.094 1.107-.266 1.613l-.814-.814A4 4 0 0 0 12 8V7a.5.5 0 0 1 1 0zm-5 4c.818 0 1.578-.245 2.212-.667l.718.719a5 5 0 0 1-2.43.923V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 1 0v1a4 4 0 0 0 4 4m3-9v4.879L5.158 2.037A3.001 3.001 0 0 1 11 3"/>
                                 <path d="M9.486 10.607 5 6.12V8a3 3 0 0 0 4.486 2.607m-7.84-9.253 12 12 .708-.708-12-12z"/>
-                              </svg>
+                            </svg>
                         </div>
                         <div id="unmuteIcon" style="display:none; cursor: pointer;">
+                            <!-- Unmute Icon -->
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-mic" viewBox="0 0 16 16">
                                 <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5"/>
                                 <path d="M10 8a2 2 0 1 1-4 0V3a2 2 0 1 1 4 0zM8 0a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V3a3 3 0 0 0-3-3"/>
                             </svg>
                         </div>
                     </li>
+                
+                    
                     <li class="statusboard"> <!--music icon-->
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-music-note-list" viewBox="0 0 16 16">
                             <path d="M12 13c0 1.105-1.12 2-2.5 2S7 14.105 7 13s1.12-2 2.5-2 2.5.895 2.5 2"/>
@@ -41,7 +50,7 @@
                     </li>
                 </ul>
                 <div class="statusboard2">
-                    <h4>Eve is...</h4>
+                    <h4>{{ child_name }} is...</h4>
                     <span id="statusText">Active</span>
                     <div class="statusIcons">
                         <div class="statusIcon active" data-status="Active">
@@ -98,8 +107,13 @@
             
         </form>
     </div>
+</div>
+
+
 {% endblock %}
 
 
 
    
+
+<!-- /* index.html */ -->

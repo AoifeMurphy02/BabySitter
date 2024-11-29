@@ -10,13 +10,13 @@ import my_db
 db= my_db.db
 
 
+
 app = flask = Flask(__name__)
 load_dotenv()
 app.secret_key = os.getenv('SECRET_KEY')
-os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
-
-
+app.config['UPLOAD_FOLDER'] = os.path.abspath('uploads')
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 #app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('MYSQL_HOST')
 app.config['SQLALCHEMY_DATABASE_URI'] = (
     f"mysql+pymysql://{os.getenv('MYSQL_USER')}:{os.getenv('MYSQL_PASSWORD')}"
@@ -29,6 +29,7 @@ os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
 
 # Google OAuth 2
+
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
@@ -36,10 +37,10 @@ client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
 # pubnub keys and ID
 pnconfig = PNConfiguration()
-pnconfig.subscribe_key = 'sub-c-f8bff00d-78e1-4bb1-86d5-e81d5043ed37'
-pnconfig.publish_key = 'pub-c-a5e694de-d708-4674-9f6a-9df8bdae40a7'
-pnconfig.secret_key = 'sec-c-MzVlZDVmMzUtZjU3OC00YjgzLTg2ZWEtN2NlZWIyNWEwNGQ3'  
-pnconfig.uuid ='Baby-device'
+pnconfig.subscribe_key =os.getenv("PUBNUB_SUBSCRIBE_KEY")
+pnconfig.publish_key =os.getenv("PUBNUB_PUBLISH_KEY")
+pnconfig.secret_key =os.getenv("PUBNUB_SECRET")   
+pnconfig.uuid =os.getenv("PUBNUB_NAME") 
 
 pubnub =PubNub(pnconfig)
 
@@ -49,25 +50,68 @@ db.init_app(app)
 
 def grant_access():
     pubnub.grant()\
-        .channels("New-channel")\
+        .channels("babysitter")\
         .read(True)\
         .write(True)\
         .manage(True)\
-        .sync()
+        .ttl(1440) #\
+       # .sync()
 
 grant_access()
 
-VIDEO_URL = "http://192.168.183.28:8000/video1.mp4"
-SOUND_URL = "http://192.168.183.28:8000/sound1.wav"
+#VIDEO_URL = "http://192.168.183.28:8000/video1.mp4"
+#SOUND_URL = "http://192.168.183.28:8000/sound1.wav"
+VIDEO_URL = "default_video.mp4"
+SOUND_URL = "default_sound.wav"
+from pubnub.callbacks import SubscribeCallback
+
+def subscribe_to_pubnub():
+    class MySubscribeCallback(SubscribeCallback):
+        def message(self, pubnub, message):
+            global VIDEO_URL, SOUND_URL
+            try:
+                print(f"Received PubNub message: {message.message}")
+                # Update the URLs using the correct keys from the message payload
+                if 'video_ready' in message.message:
+                    VIDEO_URL = message.message['video_ready']
+                    print(f"Updated VIDEO_URL to: {VIDEO_URL}")
+                if 'audio_ready' in message.message:
+                    SOUND_URL = message.message['audio_ready']
+                    print(f"Updated SOUND_URL to: {SOUND_URL}")
+            except Exception as e:
+                print(f"Error in PubNub callback: {e}")
+        def status(self, pubnub, status):
+            if status.is_error():
+                print(f"PubNub status error: {status}")
+
+        def presence(self, pubnub, presence):
+            # Handle presence events if needed
+            print(f"Presence event: {presence}")
+
+    # Add the listener
+    pubnub.add_listener(MySubscribeCallback())
+
+    # Subscribe to the "babysitter" channel
+    pubnub.subscribe().channels("babysitter").execute()
+
 
 
 SPORTS = ["Basketball", "Badminton","Volleyball"]
 REGISTRANTS = {}
 
+
+guardian_name1 = "John"
+guardian_name2 = "Jane"
+child_name = "Meghan"
+
 @app.route("/", methods=["GET","POST"])
 def index():
-    video_url = "http://192.168.183.28:8000/video1.mp4"  
-    return render_template("index.html", sports=SPORTS, video_url=video_url)
+    child_name
+    guardian_name1
+    video_url = VIDEO_URL 
+    sound_url = SOUND_URL
+     
+    return render_template("index.html", sports=SPORTS, video_url=video_url, sound_url=sound_url, child_name=child_name, guardian_name1=guardian_name1, guardian_name2=guardian_name2)
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -75,7 +119,6 @@ def signup():
     if request.method == 'POST':
         user_name = request.form['username']
         password = request.form['password']
-        name = request.form['name']
         email = request.form['email']
         
         # Check if email is valid
@@ -97,7 +140,7 @@ def signup():
             return render_template('signup.html')
 
         # Save user to database
-        my_db.add_babysitter(user_name=user_name, password=hashed_password, name=name, email=email)
+        my_db.add_babysitter(user_name=user_name, name='', password=hashed_password, email=email)
         flash('You have successfully signed up!', 'success')
         return redirect(url_for('login'))
     return render_template('signup.html')
@@ -112,6 +155,8 @@ def login():
         
         if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
             session['email'] = user.email
+            session['name'] = user.name
+            session['user_name'] = user.user_name
             flash('Login successful!', 'success')
             return redirect(url_for('loggedin'))
         else:
@@ -133,10 +178,6 @@ def google_login():
 @app.route('/login/google/callback')
 def google_callback():
     code = request.args.get("code")
-    if not code:
-        print("Authorization failed. No code received.")
-        return "Authorization failed", 400
-    print("Received code:", code)
 
     google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
     token_endpoint = google_provider_cfg["token_endpoint"]
@@ -165,10 +206,22 @@ def google_callback():
     if user_info.get("email_verified"):
         unique_id = user_info["sub"]
         users_email = user_info["email"]
-        session['username'] = users_email
+        users_name = user_info.get("name", "Google User")
+        
+        # Check if user already exists in the database
+        existing_user = my_db.get_babysitter_by_email(users_email)
+        if not existing_user:
+            # Create a new user entry if it is their first time logging in
+            my_db.add_babysitter(user_name=unique_id, password="", name=users_name, email=users_email)
+            flash('Account created successfully with Google login!', 'success')
+        
+        session['email'] = users_email
+        session['user_name'] = unique_id
+        session['name'] = users_name
         flash('Login successful!', 'success')
         return redirect(url_for('loggedin'))
     else:
+        flash('User email not available or not verified by Google.', 'danger')
         return redirect(url_for('login'))
 
 
@@ -176,7 +229,7 @@ def google_callback():
 @app.route('/loggedin')
 def loggedin():
     if 'email' in session:
-        return f'Welcome {session["email"]}!'
+        return f'Email:{session["email"]}, Username:{session["user_name"]}, Name:{session["name"]}!'
     else:
         return redirect(url_for('login'))
     
@@ -208,15 +261,96 @@ def register():
 
 @app.route("/video")
 def video():
+    child_name
+    return render_template("video.html", video_url=VIDEO_URL, child_name=child_name)
+    print(VIDEO_URL) 
     return render_template("video.html", video_url=VIDEO_URL)
 @app.route("/sound")
 def sound():
     print(SOUND_URL) 
     return render_template("sound.html", sound_url=SOUND_URL)
-   
 
 
+@app.route("/history")
+def history():
+    child_name
+    return render_template("history.html", child_name=child_name)
 
+
+@app.route("/user")
+def user():
+    child_name
+    return render_template("user.html", child_name=child_name)
+
+
+@app.route("/settings")
+def settings():
+    child_name
+    return render_template("settings.html", child_name=child_name)
+
+
+def download_and_save_file(file_url, file_type):
+    try:
+        # Get the file content
+        response = requests.get(file_url, stream=True)
+        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
+        
+        # Determine the file name and path
+        file_name = file_url.split("/")[-1]  # Get the file name from the URL
+        if file_type == 'video':
+            sub_dir = 'videos'
+        elif file_type == 'sound':
+            sub_dir = 'sounds'
+        else:
+            raise ValueError("Invalid file type. Must be 'video' or 'sound'.")
+
+        # Ensure the subdirectory exists
+        save_path = os.path.join(app.config['UPLOAD_FOLDER'], sub_dir)
+        os.makedirs(save_path, exist_ok=True)
+        
+        # Save the file locally
+        file_path = os.path.join(save_path, file_name)
+        with open(file_path, 'wb') as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+
+        return file_path  # Return the local path of the saved file
+    except requests.RequestException as e:
+        raise RuntimeError(f"Error downloading file: {e}")
+
+
+@app.route("/add_video", methods=["POST"])
+def add_video():
+    video_url = request.form.get("video_url")
+    if not video_url:
+        return jsonify({'status': 'error', 'message': 'No video URL provided'}), 400
+
+    try:
+        # Download and save the video file locally
+        local_path = download_and_save_file(video_url, 'video')
+        
+        # Add the local file path to the database
+        my_db.add_baby_data(camera_feed_path=local_path)
+        return jsonify({'status': 'success', 'message': 'Video saved successfully', 'path': local_path})
+    except RuntimeError as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+
+
+@app.route("/add_sound", methods=["POST"])
+def add_sound():
+    sound_url = request.form.get("sound_url")
+    if not sound_url:
+        return jsonify({'status': 'error', 'message': 'No sound URL provided'}), 400
+
+    try:
+        # Download and save the sound file locally
+        local_path = download_and_save_file(sound_url, 'sound')
+        
+        # Add the local file path to the database
+        my_db.add_baby_data(audio=local_path)
+        return jsonify({'status': 'success', 'message': 'Sound saved successfully', 'path': local_path})
+    except RuntimeError as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
 
 
 # publish message to pubnub
@@ -241,12 +375,8 @@ def publish_message():
     else:
         return jsonify({'status': 'error', 'message': 'No message provided'}), 400
 
-
-
- # front end - meghan
-
-
-
     # return render_template("success.html")
+
 if __name__ == "__main__":
+    subscribe_to_pubnub()
     app.run(debug=True)

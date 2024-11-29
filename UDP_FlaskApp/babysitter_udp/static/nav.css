@@ -1,6 +1,16 @@
 
-.headerchild
+body
 {
+    background-color: #e1daeb;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+
+.headerchild {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+    padding: 10px 20px;
     background-color: #B795E4;
     color: #ffffff;
     border-bottom-left-radius: 10px;
@@ -85,10 +95,24 @@ header h1 {
 .headerchild h1 {
     padding: 20px;
     display: flex;
+    align-items: center; 
     justify-content: center;
-    font-weight: bold;
-
+    gap: 8px;
+    line-height: 1.2;
+    color: white;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
+
+.headerchild h1 svg {
+    margin-top: 2px;
+}
+
+.menu-icon {
+    margin-right: 10px; 
+    cursor: pointer;    
+    color: white
+} */
+
 
 .navbar {
     position: fixed; 
@@ -108,7 +132,7 @@ header h1 {
 
 
 .homenav-item {
-    background-color: #B795E4; 
+    background-color: #876aad; 
     border-radius: 50%; 
     color: white;
     padding: 10px; 
@@ -118,14 +142,25 @@ header h1 {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); 
     margin-top: -20px;
     position: relative; 
+    text-decoration: none;
     z-index: 1; 
 }
 
+.homenav-item a {
+    color: white; 
+    text-decoration: none; 
+}
+
+.homenav-item a:hover {
+    color: white;
+    text-decoration: none;
+}
 
 
 .homenav-item svg {
-    width: 25px;
-    height: 25px; 
+    width: 30px;
+    height: 30px; 
+    text-decoration: none;
 }
 
 .nav-item svg {
@@ -332,6 +367,7 @@ ul {
 
 .nav-item {
     margin: 0 30px; 
+    text-decoration: none;
 
 }
 
@@ -344,6 +380,7 @@ ul {
 
     .nav-item {
         margin: 10px;
+        text-decoration: none;
     }
 
     .homenav-item {
@@ -353,95 +390,37 @@ ul {
     .ul {
         margin-left: 5px
     }
+
+    .containerindex
+{   margin-bottom: 20%;
+    padding: 8%;
+}
+}
+
+.containerindex
+{
+    padding: 8%;
+ background-color: #ffffff; /* rgba(154, 154, 154, 0.8) */
+ border-radius: 20px;
+ margin-top: 30px; 
 }
 
 
-/* footer */
+.videocontainer
+{
 
-footer {
-    position: relative; 
-    bottom: 0;
-    width: 100%;
-    background-color: #fff; 
-    color: #000; 
-    padding: 40px; 
-    z-index: 1000; 
+    margin-bottom: 20%;
+    padding: 8%;
 }
 
-
-
-.footer-container {
-    display: flex;
-    justify-content: space-between;
-    padding-left: 10%;
-}
-
-.footer-section {
-    width: 30%;
-}
-
-.footer-section h3 {
-    font-size: 24px;
-    margin-bottom: 15px;
-    color: #B795E4;
-}
-
-.footer-section ul {
-    list-style-type: none;
-    padding: 0;
-    color: #876aad;
-}
-
-.footer-section ul li {
-    margin-bottom: 10px;
-    font-size: 16px; 
-    color: #876aad;
-}
-
-.footer-section form {
-    display: flex;
-    flex-direction: column;
-}
-
-.footer-section form input[type="email"] {
-    margin-bottom: 15px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px; 
-}
-
-.footer-section form button[type="submit"] {
-    background-color: #B795E4;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 18px; 
-}
-
-.footer-section form button[type="submit"]:hover {
-    background-color: #B795E4;
-}
-
-
-/* Media query */
-@media (max-width: 768px) {
-    .footer-container {
-      flex-direction: column;
-    }
-  
-    .footer-section {
-      width: 100%;
-      margin-bottom: 20px;
-    }
-  }
-  
-
+.bodycon
+{
+   margin-bottom: 20px;
+   padding: 10px;
   /* index html page */
-
+}
   .responsive-img {
-    width: 100%;  
+    width: 150px;  
     height: auto; 
     border-radius: 30px;
 }
@@ -455,7 +434,7 @@ h4
 .block2 {
     background-color: #f0f0f0;
     padding: 20px;
-    border-radius: 8px;
+    border-radius: 20px;
 }
 
 
@@ -516,3 +495,13 @@ h4
 }
 
 
+#mb-4welcome {
+    margin-top: 10px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #333;
+}
+
+
+
+/* nav.css */
