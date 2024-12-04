@@ -22,6 +22,11 @@
         <div id="cryingAlert" style="display:none; color: red; font-size: 20px; font-weight: bold;">
             Baby is crying!
         </div>
+
+          <div>
+            <h4>Current Temperature: <span id="current_temp">Loading...</span></h4>
+            <h4>Current Humidity: <span id="current_humidity">Loading...</span></h4>
+        </div>
         
             <div class="block2">
                 
@@ -112,9 +117,9 @@
             
         </form>
         <button class="buttonmusic" onclick="sendPlayMusicCommand()">music</button>
-        
-    
-</div>
+
+       
+    </div>
 
 <script type="text/javascript">
     // Initialize PubNub
@@ -140,6 +145,19 @@
                 const cryingAlert = document.getElementById('cryingAlert');
                 cryingAlert.style.display = 'block'; // Make the alert visible
                 cryingAlert.textContent = event.message.sound_alert; // Set the message text
+            }
+           
+
+            // current temperature
+            if (event.message.current_temp) {
+                const currentTemp = document.getElementById('current_temp');
+                currentTemp.textContent = event.message.current_temp; // Update the temp value
+            }
+
+            // current humidity
+            if (event.message.current_humidity) {
+                const currentHumidity = document.getElementById('current_humidity');
+                currentHumidity.textContent = event.message.current_humidity; // Update the humidity value
             }
         },
         status: function(statusEvent) {

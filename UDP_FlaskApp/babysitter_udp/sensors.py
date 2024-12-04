@@ -14,7 +14,8 @@ import threading
 import signal
 import sys
 import pygame
-
+import adafruit_dht
+import board
 
 pygame.init()
 
@@ -195,7 +196,30 @@ def record_audio(file_path, duration=5, rate=44100, channels=1, chunk_size=1024)
         wf.writeframes(b''.join(frames))
     print(f"Audio saved: {file_path}")
 
+
+
+def current_temperature(interval=2):
+
+    dht_device = adafruit_dht.DHT22(board.D4)
+
+    try:
+        temperature = dht_device.temperature
+        humidity = dht_device.humidity
+        print(f"Temperature: {temperature}°C")
+        print(f"Humidity: {humidity}%")
+        
+        pubnub.publish().channel('babysitter').message({'current_temp': f'{temperature}°C'}).sync()
+        pubnub.publish().channel('babysitter').message({'current_humidity': f'{humidity}%'}).sync()
+    except RuntimeError as e:
+        print(f"Error reading sensor: {e}")
+
+
+
 def main():
+
+     # Start temperature monitoring
+    current_temperature()
+
     video_path = camera()
     audio_path = "/home/aoife/Videos/sound1.wav"
     os.makedirs(os.path.dirname(audio_path), exist_ok=True)
@@ -233,5 +257,6 @@ def main():
 if __name__ == "__main__":
     pubnub.add_listener(MySubscribeCallback())
     detect_loud_sound(threshold=1000, duration=10)
+    current_temperature()
     
     main()
