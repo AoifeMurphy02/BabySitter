@@ -54,7 +54,7 @@ def speakers():
 # Global flag to control the sound detection loop
 sound_detection_active = True
 
-def detect_loud_sound_continuous(threshold=500, rate=44100, channels=1, chunk_size=1024):
+def detect_loud_sound_continuous(threshold=2000, rate=44100, channels=1, chunk_size=1024):
     """Continuously detect loud sounds."""
     global sound_detection_active
 
