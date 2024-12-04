@@ -27,6 +27,10 @@
             <h4>Current Temperature: <span id="current_temp">Loading...</span></h4>
             <h4>Current Humidity: <span id="current_humidity">Loading...</span></h4>
         </div>
+
+        <div id="tempAlert" style="display:none; color: red; font-size: 20px; font-weight: bold;">
+            Temp is too high!
+        </div>
         
             <div class="block2">
                 
@@ -158,6 +162,11 @@
             if (event.message.current_humidity) {
                 const currentHumidity = document.getElementById('current_humidity');
                 currentHumidity.textContent = event.message.current_humidity; // Update the humidity value
+            }
+            if (event.message.temp_alert) {
+                const tempAlert = document.getElementById('temp_alert');
+                tempAlert.style.display = 'block';
+                tempAlert.textContent = event.message.temp_alert; // Update the humidity value
             }
         },
         status: function(statusEvent) {

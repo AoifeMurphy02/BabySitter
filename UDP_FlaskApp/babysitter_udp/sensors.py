@@ -16,6 +16,8 @@ import sys
 import pygame
 import adafruit_dht
 import board
+import RPi.GPIO as GPIO
+GPIO.cleanup() 
 
 pygame.init()
 
@@ -210,6 +212,13 @@ def current_temperature(interval=2):
         
         pubnub.publish().channel('babysitter').message({'current_temp': f'{temperature}°C'}).sync()
         pubnub.publish().channel('babysitter').message({'current_humidity': f'{humidity}%'}).sync()
+
+        # Send alert if temperature exceeds 26°C
+        if temperature and temperature > 26:
+            alert_message = f"Alert! High temperature detected: {temperature}°C"
+            print(alert_message)
+            pubnub.publish().channel('babysitter').message({'temp_alert': alert_message}).sync()
+
     except RuntimeError as e:
         print(f"Error reading sensor: {e}")
 

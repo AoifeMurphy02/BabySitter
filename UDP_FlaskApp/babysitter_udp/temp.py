@@ -1,16 +1,19 @@
-import time
+import pulseio
+from adafruit_dht import DHT22
 import board
-import adafruit_dht
+import time
 
-# Replace D4 with your GPIO pin
-dht_device = adafruit_dht.DHT22(board.D4)
+# Initialize the DHT device using GPIO4
+dht_device = DHT22(board.D4)  # D4 corresponds to GPIO4 on the Raspberry Pi
 
 while True:
     try:
-        temperature = dht_device.temperature
         humidity = dht_device.humidity
-        print(f"Temp: {temperature:.1f}°C, Humidity: {humidity:.1f}%")
+        temperature = dht_device.temperature
+        if humidity is not None and temperature is not None:
+            print(f"Temp: {temperature}°C, Humidity: {humidity}%")
+        else:
+            print("Failed to retrieve data from sensor.")
     except RuntimeError as error:
-        # DHT sensors can fail sporadically, just retry
         print(f"Error reading sensor: {error}")
     time.sleep(2)
