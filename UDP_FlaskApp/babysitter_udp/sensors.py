@@ -5,9 +5,21 @@ import os
 import subprocess
 import pyaudio
 import wave
+import numpy as np
 from pubnub.pnconfiguration import PNConfiguration
 from pubnub.pubnub import PubNub, SubscribeListener
+from pubnub.callbacks import SubscribeCallback
 from dotenv import load_dotenv
+import threading
+import signal
+import sys
+import pygame
+import adafruit_dht
+import board
+import RPi.GPIO as GPIO
+GPIO.cleanup() 
+
+pygame.init()
 
 load_dotenv()
 
@@ -26,11 +38,73 @@ pubnub.add_listener(Listener())
 
 app_channel = "babysitter"
 
+class MySubscribeCallback(SubscribeCallback):
+    def message(self, pubnub, message):
+        """Handle incoming messages."""
+        if message.message == "play_music":
+            
+            print("Received 'play_music' message. Playing sound...")
+            speakers()
+
+def speakers():
+
+    sound = pygame.mixer.Sound('/home/aoife/Videos/music.wav')
+    sound.play()
+
+
+
+# Global flag to control the sound detection loop
+sound_detection_active = True
+
+def detect_loud_sound_continuous(threshold=2000, rate=44100, channels=1, chunk_size=1024):
+    """Continuously detect loud sounds."""
+    global sound_detection_active
+
+    p = pyaudio.PyAudio()
+    stream = p.open(format=pyaudio.paInt16, channels=channels, rate=rate, input=True, frames_per_buffer=chunk_size)
+
+    print("Listening for loud sounds (continuous)... Press Ctrl+C to stop.")
+
+    try:
+        while sound_detection_active:
+            data = stream.read(chunk_size, exception_on_overflow=False)
+            audio_data = np.frombuffer(data, dtype=np.int16)
+            max_amplitude = np.max(np.abs(audio_data))
+
+            if max_amplitude > threshold:
+                print(f"Loud sound detected! Amplitude: {max_amplitude}")
+                send_sound_notification()
+    except KeyboardInterrupt:
+        print("Sound detection stopped by user.")
+    finally:
+        stream.stop_stream()
+        stream.close()
+        p.terminate()
+        print("Stopped listening.")
+
+def start_sound_detection():
+    """Start the sound detection in a separate thread."""
+    sound_thread = threading.Thread(target=detect_loud_sound_continuous, kwargs={"threshold": 1000})
+    sound_thread.daemon = True  # Ensure the thread exits when the main program exits
+    sound_thread.start()
+    return sound_thread
+
+def handle_exit_signal(signal, frame):
+    """Handle exit signals (e.g., Ctrl+C) to stop sound detection."""
+    global sound_detection_active
+    print("Shutting down...")
+    sound_detection_active = False
+    sys.exit(0)
+
+# Attach the signal handler
+signal.signal(signal.SIGINT, handle_exit_signal)
+
 def notify_file_ready(video_url, audio_url):
     """Notify the app with video and audio URLs."""
     pubnub.publish().channel(app_channel).message({
         "video_ready": video_url,
-        "audio_ready": audio_url
+        "audio_ready": audio_url,
+       
     }).sync()
     print(f"Notification sent for video: {video_url} and audio: {audio_url}")
 
@@ -73,6 +147,39 @@ def camera():
     convert_to_mp4(video_h264_path, video_mp4_path)
     return video_mp4_path
 
+
+def detect_loud_sound(threshold=1500, duration=10, rate=44100, channels=1, chunk_size=1024):
+   
+   # Detect loud sounds from the microphone.
+    p = pyaudio.PyAudio()
+    stream = p.open(format=pyaudio.paInt16, channels=channels, rate=rate, input=True, frames_per_buffer=chunk_size)
+
+    print("Listening for loud sounds...")
+
+    for _ in range(0, int(rate / chunk_size * duration)):
+        data = stream.read(chunk_size, exception_on_overflow=False)
+        audio_data = np.frombuffer(data, dtype=np.int16)
+        max_amplitude = np.max(np.abs(audio_data))
+
+        if max_amplitude > threshold:
+            print(f"Loud sound detected! Amplitude: {max_amplitude}")
+         
+            send_sound_notification()
+    stream.stop_stream()
+    stream.close()
+    p.terminate()
+    print("Stopped listening.")
+
+
+def send_sound_notification():
+    # Notify the app that a loud sound has been detected.
+    
+    message = {"sound_detected": True}
+   #pubnub.publish().channel(app_channel).message(message).sync()
+    print("Notification sent: Loud sound detected.")
+    pubnub.publish().channel('babysitter').message({'sound_alert': 'Baby is crying!'}).sync()
+
+
 def record_audio(file_path, duration=5, rate=44100, channels=1, chunk_size=1024):
     """Record audio from the microphone."""
     p = pyaudio.PyAudio()
@@ -91,7 +198,37 @@ def record_audio(file_path, duration=5, rate=44100, channels=1, chunk_size=1024)
         wf.writeframes(b''.join(frames))
     print(f"Audio saved: {file_path}")
 
+
+
+def current_temperature(interval=2):
+
+    dht_device = adafruit_dht.DHT22(board.D4)
+
+    try:
+        temperature = dht_device.temperature
+        humidity = dht_device.humidity
+        print(f"Temperature: {temperature}°C")
+        print(f"Humidity: {humidity}%")
+        
+        pubnub.publish().channel('babysitter').message({'current_temp': f'{temperature}°C'}).sync()
+        pubnub.publish().channel('babysitter').message({'current_humidity': f'{humidity}%'}).sync()
+
+        # Send alert if temperature exceeds 26°C
+        if temperature and temperature > 26:
+            alert_message = f"Alert! High temperature detected: {temperature}°C"
+            print(alert_message)
+            pubnub.publish().channel('babysitter').message({'temp_alert': alert_message}).sync()
+
+    except RuntimeError as e:
+        print(f"Error reading sensor: {e}")
+
+
+
 def main():
+
+     # Start temperature monitoring
+    current_temperature()
+
     video_path = camera()
     audio_path = "/home/aoife/Videos/sound1.wav"
     os.makedirs(os.path.dirname(audio_path), exist_ok=True)
@@ -108,8 +245,27 @@ def main():
     video_url = f"http://{ip_address}:8000/{os.path.basename(video_path)}"
     audio_url = f"http://{ip_address}:8000/{os.path.basename(audio_path)}"
 
+
+    speakers()
+
     # Notify app
     notify_file_ready(video_url, audio_url)
+    sound_thread = start_sound_detection()
+
+    # Run the main logic
+    while True:
+        try:
+           
+            print("Main application running... (Press Ctrl+C to stop)")
+            sleep(10)  
+        except KeyboardInterrupt:
+            break
+    handle_exit_signal(None, None)
+
 
 if __name__ == "__main__":
+    pubnub.add_listener(MySubscribeCallback())
+    detect_loud_sound(threshold=1000, duration=10)
+    current_temperature()
+    
     main()

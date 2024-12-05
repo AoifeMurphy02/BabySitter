@@ -1,3 +1,4 @@
+
 from flask import Flask, render_template, request, redirect, jsonify, url_for, flash, session
 from flask_mysqldb import MySQL
 from pubnub.pnconfiguration import PNConfiguration
@@ -9,6 +10,10 @@ from oauthlib.oauth2 import WebApplicationClient
 import my_db
 db= my_db.db
 
+
+# Function to emit a sound detection notification
+def notify_sound_detected():
+   print('sound_alert', {'message': 'Sound detected!'})
 
 
 app = flask = Flask(__name__)
@@ -57,8 +62,8 @@ def grant_access():
         .read(True)\
         .write(True)\
         .manage(True)\
-        .ttl(1440)\
-        .sync()
+        .ttl(1440) #\
+       # .sync()
 
 grant_access()
 
@@ -67,6 +72,7 @@ grant_access()
 VIDEO_URL = "default_video.mp4"
 SOUND_URL = "default_sound.wav"
 from pubnub.callbacks import SubscribeCallback
+
 
 def subscribe_to_pubnub():
     class MySubscribeCallback(SubscribeCallback):
@@ -81,6 +87,13 @@ def subscribe_to_pubnub():
                 if 'audio_ready' in message.message:
                     SOUND_URL = message.message['audio_ready']
                     print(f"Updated SOUND_URL to: {SOUND_URL}")
+
+                if 'sound_detected' in message.message:
+                     print("Sound detected!")
+                     pubnub.publish().channel('babysitter').message({
+                    'sound_alert': 'Baby is crying!'
+                        }).sync()
+
             except Exception as e:
                 print(f"Error in PubNub callback: {e}")
         def status(self, pubnub, status):
@@ -113,8 +126,15 @@ def index():
     guardian_name1
     video_url = VIDEO_URL 
     sound_url = SOUND_URL
+
+    
+    subscribe_key = os.getenv("PUBNUB_SUBSCRIBE_KEY")
+    publish_key = os.getenv("PUBNUB_PUBLISH_KEY")
+    secret_key = os.getenv("PUBNUB_SECRET_KEY") 
+   
      
-    return render_template("index.html", sports=SPORTS, video_url=video_url, sound_url=sound_url, child_name=child_name, guardian_name1=guardian_name1, guardian_name2=guardian_name2)
+    return render_template("index.html", sports=SPORTS, video_url=video_url, sound_url=sound_url, child_name=child_name, guardian_name1=guardian_name1, guardian_name2=guardian_name2, pubnub_subscribe_key=subscribe_key,  # Pass the PubNub Subscribe key to the template
+        pubnub_publish_key=publish_key)
 
 
 @app.route('/signup', methods=['GET', 'POST'])
@@ -265,8 +285,7 @@ def register():
 def video():
     child_name
     return render_template("video.html", video_url=VIDEO_URL, child_name=child_name)
-    print(VIDEO_URL) 
-    return render_template("video.html", video_url=VIDEO_URL)
+
 
 @app.route("/sound")
 def sound():

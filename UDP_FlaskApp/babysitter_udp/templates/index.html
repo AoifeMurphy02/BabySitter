@@ -19,6 +19,19 @@
                 </div>
             </div>
         <h4>Status</h4>
+        <div id="cryingAlert" style="display:none; color: red; font-size: 20px; font-weight: bold;">
+            Baby is crying!
+        </div>
+
+          <div>
+            <h4>Current Temperature: <span id="current_temp">Loading...</span></h4>
+            <h4>Current Humidity: <span id="current_humidity">Loading...</span></h4>
+        </div>
+
+        <div id="tempAlert" style="display:none; color: red; font-size: 20px; font-weight: bold;">
+            Temp is too high!
+        </div>
+        
             <div class="block2">
                 
                 <ul class="statusboardlist">
@@ -36,11 +49,12 @@
                                 <path d="M3.5 6.5A.5.5 0 0 1 4 7v1a4 4 0 0 0 8 0V7a.5.5 0 0 1 1 0v1a5 5 0 0 1-4.5 4.975V15h3a.5.5 0 0 1 0 1h-7a.5.5 0 0 1 0-1h3v-2.025A5 5 0 0 1 3 8V7a.5.5 0 0 1 .5-.5"/>
                                 <path d="M10 8a2 2 0 1 1-4 0V3a2 2 0 1 1 4 0zM8 0a3 3 0 0 0-3 3v5a3 3 0 0 0 6 0V3a3 3 0 0 0-3-3"/>
                             </svg>
+
                         </div>
                     </li>
                 
-                    
-                    <li class="statusboard"> <!--music icon-->
+                    <button  class="buttonmusic" onclick="sendPlayMusicCommand()">
+                    <li class="statusboard"  > <!--music icon-->
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-music-note-list" viewBox="0 0 16 16">
                             <path d="M12 13c0 1.105-1.12 2-2.5 2S7 14.105 7 13s1.12-2 2.5-2 2.5.895 2.5 2"/>
                             <path fill-rule="evenodd" d="M12 3v10h-1V3z"/>
@@ -48,6 +62,7 @@
                             <path fill-rule="evenodd" d="M0 11.5a.5.5 0 0 1 .5-.5H4a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5m0-4A.5.5 0 0 1 .5 7H8a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5m0-4A.5.5 0 0 1 .5 3H8a.5.5 0 0 1 0 1H.5a.5.5 0 0 1-.5-.5"/>
                         </svg>
                     </li>
+                </button>
                 </ul>
                 <div class="statusboard2">
                     <h4>{{ child_name }} is...</h4>
@@ -100,12 +115,67 @@
                 <button class="grid-button3">Temperature</button>
                 <button class="grid-button4">History</button>
             </div>
+
             
 
             
         </form>
+        <button class="buttonmusic" onclick="sendPlayMusicCommand()">music</button>
+
+       
     </div>
-</div>
+
+<script type="text/javascript">
+    // Initialize PubNub
+    const pubnub = new PubNub({
+        publishKey: "{{ pubnub_publish_key }}",
+        subscribeKey: "{{ pubnub_subscribe_key }}",
+        uuid: "{{ pubnub_uuid }}"
+    });
+
+    // Subscribe to the "babysitter" channel
+    pubnub.subscribe({
+        channels: ['babysitter']
+    });
+
+    // Listen for messages on the channel
+    pubnub.addListener({
+        message: function(event) {
+            console.log(event.message); // Log message to the console for debugging
+
+            // Check if the message contains the "sound_alert"
+            if (event.message.sound_alert) {
+                // Show the crying message on the page
+                const cryingAlert = document.getElementById('cryingAlert');
+                cryingAlert.style.display = 'block'; // Make the alert visible
+                cryingAlert.textContent = event.message.sound_alert; // Set the message text
+            }
+           
+
+            // current temperature
+            if (event.message.current_temp) {
+                const currentTemp = document.getElementById('current_temp');
+                currentTemp.textContent = event.message.current_temp; // Update the temp value
+            }
+
+            // current humidity
+            if (event.message.current_humidity) {
+                const currentHumidity = document.getElementById('current_humidity');
+                currentHumidity.textContent = event.message.current_humidity; // Update the humidity value
+            }
+            if (event.message.temp_alert) {
+                const tempAlert = document.getElementById('temp_alert');
+                tempAlert.style.display = 'block';
+                tempAlert.textContent = event.message.temp_alert; // Update the humidity value
+            }
+        },
+        status: function(statusEvent) {
+            if (statusEvent.category === "PNConnectedCategory") {
+                console.log('Connected to PubNub');
+            }
+        }
+    });
+</script>
 
 
 {% endblock %}
