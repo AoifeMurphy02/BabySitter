@@ -14,6 +14,7 @@ db= my_db.db
 app = flask = Flask(__name__)
 
 
+
 load_dotenv()
 app.secret_key = os.getenv('SECRET_KEY')
 
