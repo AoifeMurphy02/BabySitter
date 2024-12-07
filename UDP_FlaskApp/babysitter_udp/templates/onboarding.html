@@ -1,0 +1,141 @@
+{% extends "layout.html" %}
+{% block body %}
+<div class="onboarding-container">
+    <h1 class="onboarding-title">Welcome</h1>
+    <p class="onboarding-description">Let's get started with setting up your account.</p>
+    <form action="/onboarding" method="POST" id="onboarding-form">
+
+        <div class="form-section" id="step1">
+            <label for="child_name">Enter your Baby's name</label>
+            <input type="text" class="form-control" id="child_name" name="child_name" required>
+            <button type="button" class="onboarding-button" onclick="validateStep(1)">Next</button>
+        </div>
+
+        <div class="form-section" id="step2" style="display: none;">
+            <label for="child_age">Enter your Baby's age</label>
+            <select class="form-control" id="child_age" name="child_age" required>
+                <option value="">Select Age</option>
+                <option value="0-12 weeks">Newborn (0-12 Weeks)</option>
+                <option value="3-6 months">3-6 months</option>
+                <option value="6-12 months">6-12 months</option>
+                <option value="12-18 months">12-18 months</option>
+                <option value="18-24 months">18-24 months</option>
+                <option value="2-3 years">2-3 years</option>
+                <option value="3-4 years">3-4 years</option>
+            </select>
+            <button type="button" class="onboarding-button" onclick="validateStep(2)">Next</button>
+        </div>
+
+        <div class="form-section" id="step3" style="display: none;">
+            <label for="guardian_name1">Enter your name</label>
+            <input type="text" class="form-control" id="guardian_name1" name="guardian_name1" required>
+            <button type="button" class="onboarding-button" onclick="validateStep(3)">Next</button>
+        </div>
+
+        <div class="form-section" id="step4" style="display: none;">
+            <label for="guardian_email">Enter your email</label>
+            <input type="email" class="form-control" id="guardian_email" name="guardian_email" required>
+            <button type="button" class="onboarding-button" onclick="validateStep(4)">Next</button>
+        </div>
+
+        <div class="form-section" id="step5" style="display: none;">
+            <label for="guardian_phone">Enter your phone number</label>
+            <input type="tel" class="form-control" id="guardian_phone" name="guardian_phone" required>
+            <button type="button" class="onboarding-button" onclick="validateStep(5)">Next</button>
+        </div>
+
+        <div class="form-section" id="step6" style="display: none;">
+            <label for="guardian_relationship">Enter your relationship with them</label>
+            <select class="form-control" id="guardian_relationship" name="guardian_relationship" required>
+                <option value="">Select Relationship</option>
+                <option value="Parent">Parent</option>
+                <option value="Grandparent">Grandparent</option>
+                <option value="Aunt">Aunt</option>
+                <option value="Uncle">Uncle</option>
+                <option value="Babysitter">Babysitter</option>
+                <option value="Other">Other</option>
+            </select>
+            <button type="button" class="onboarding-button" onclick="validateStep(6)">Next</button>
+            <button type="button" class="onboarding-button" onclick="skipGuardian2()">Skip</button>
+        </div>
+
+        <div class="form-section" id="guardian2" style="display: none;">
+            <label for="guardian_name2">Enter their name</label>
+            <input type="text" class="form-control" id="guardian_name2" name="guardian_name2" required>
+            <label for="guardian_email2">Enter their email</label>
+            <input type="email" class="form-control" id="guardian_email2" name="guardian_email2" required>
+            <label for="guardian_phone2">Enter their phone number</label>
+            <input type="tel" class="form-control" id="guardian_phone2" name="guardian_phone2" required>
+            <button type="button" class="onboarding-button" onclick="validateStep(7)">Next</button>
+            <button type="button" class="onboarding-button" onclick="skipGuardian2()">Skip</button>
+        </div>
+
+        <div class="form-section" id="step8" style="display: none;">
+            <label for="guardian_relationship2">Enter your relationship with them</label>
+            <select class="form-control" id="guardian_relationship2" name="guardian_relationship2" required>
+                <option value="">Select Relationship</option>
+                <option value="Parent">Parent</option>
+                <option value="Grandparent">Grandparent</option>
+                <option value="Aunt">Aunt</option>
+                <option value="Uncle">Uncle</option>
+                <option value="Babysitter">Babysitter</option>
+                <option value="Other">Other</option>
+            </select>
+            <button type="button" class="onboarding-button" onclick="completeOnboarding(event)">Submit</button>
+        </div>
+
+        <div class="form-section" id="completion-message" style="display: none;">
+            <h2>Complete Onboarding</h2>
+            <p>Your onboarding process is complete. Click the button below to proceed.</p>
+            <button type="button" class="onboarding-button" onclick="homepageredirect()">Go to Homepage</button>
+        </div>
+    </form>
+</div>
+
+<script>
+function validateStep(currentStep) {
+    const currentElement = document.getElementById(`step${currentStep}`);
+    const inputs = currentElement.querySelectorAll('input, select');
+    let valid = true;
+
+    inputs.forEach(input => {
+        if (!input.checkValidity()) {
+            valid = false;
+            input.reportValidity(); // Show validation message
+        }
+    });
+
+    if (valid) {
+        nextStep(currentStep);
+    }
+}
+
+function nextStep(currentStep) {
+    document.getElementById(`step${currentStep}`).style.display = 'none';
+
+    const nextStep = currentStep + 1;
+    const nextStepElement = document.getElementById(`step${nextStep}`) || document.getElementById('guardian2');
+    if (nextStepElement) {
+        nextStepElement.style.display = 'block';
+    }
+}
+
+function skipGuardian2() {
+    const confirmSkip = confirm("Are you sure you want to skip setting up a second guardian?");
+    if (confirmSkip) {
+        document.getElementById('guardian2').style.display = 'none';
+        document.getElementById('completion-message').style.display = 'block';
+    }
+}
+
+function completeOnboarding(event) {
+    event.preventDefault(); 
+    document.getElementById('step8').style.display = 'none';
+    document.getElementById('completion-message').style.display = 'block';
+}
+
+function homepageredirect() {
+    window.location.href = '/'; 
+}
+</script>
+{% endblock %}

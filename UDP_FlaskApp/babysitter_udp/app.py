@@ -102,7 +102,7 @@ REGISTRANTS = {}
 
 guardian_name1 = "John"
 guardian_name2 = "Jane"
-child_name = "Meghan"
+child_name = "Eve"
 
 @app.route("/", methods=["GET","POST"])
 def index():
@@ -174,11 +174,14 @@ def google_login():
         scope=["openid", "email", "profile"],
     )
     return redirect(request_uri)
-
 @app.route('/login/google/callback')
 def google_callback():
     code = request.args.get("code")
+    print("Authorization Code:", code)
+    print("Full Request URL:", request.url)
 
+    if not code:
+        return "Authorization code not found.", 400
     google_provider_cfg = requests.get(GOOGLE_DISCOVERY_URL).json()
     token_endpoint = google_provider_cfg["token_endpoint"]
 
@@ -193,8 +196,12 @@ def google_callback():
         headers=headers,
         data=body,
         auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
+        
     )
+
     client.parse_request_body_response(json.dumps(token_response.json()))
+    
+    
 
     # Get user info
     userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
@@ -275,6 +282,12 @@ def sound():
 def history():
     child_name
     return render_template("history.html", child_name=child_name)
+
+
+@app.route("/onboarding")
+def onboarding():
+    child_name
+    return render_template("onboarding.html", child_name=child_name)
 
 
 @app.route("/user")
