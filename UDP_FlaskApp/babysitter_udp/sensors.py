@@ -1,5 +1,6 @@
 from picamera2 import Picamera2
 from picamera2.encoders import H264Encoder
+import time
 from time import sleep
 import os
 import subprocess
@@ -13,13 +14,19 @@ from dotenv import load_dotenv
 import threading
 import signal
 import sys
-import pygame
 import adafruit_dht
 import board
 import RPi.GPIO as GPIO
-GPIO.cleanup() 
+import http.server
+import socketserver
+import threading
 
-pygame.init()
+
+httpd = None
+
+last_notification_time = 0
+notification_interval = 60
+GPIO.cleanup() 
 
 load_dotenv()
 
@@ -42,16 +49,7 @@ class MySubscribeCallback(SubscribeCallback):
     def message(self, pubnub, message):
         """Handle incoming messages."""
         if message.message == "play_music":
-            
-            print("Received 'play_music' message. Playing sound...")
-            speakers()
-
-def speakers():
-
-    sound = pygame.mixer.Sound('/home/aoife/Videos/music.wav')
-    sound.play()
-
-
+            print("Received 'play_music' message. (No speakers, ignoring message)")
 
 # Global flag to control the sound detection loop
 sound_detection_active = True
@@ -89,6 +87,7 @@ def start_sound_detection():
     sound_thread.start()
     return sound_thread
 
+
 def handle_exit_signal(signal, frame):
     """Handle exit signals (e.g., Ctrl+C) to stop sound detection."""
     global sound_detection_active
@@ -104,17 +103,22 @@ def notify_file_ready(video_url, audio_url):
     pubnub.publish().channel(app_channel).message({
         "video_ready": video_url,
         "audio_ready": audio_url,
-       
     }).sync()
     print(f"Notification sent for video: {video_url} and audio: {audio_url}")
 
-def start_http_server(directory, port=8000, ip_address="192.168.183.28"):
+def start_http_server(directory, port=8000, ip_address="192.168.219.28"):
     """Start an HTTP server to serve files."""
+    global httpd
     os.chdir(directory)
-    command = ["python3", "-m", "http.server", str(port), "--bind", ip_address]
-    subprocess.Popen(command)
-    print(f"HTTP server started at http://{ip_address}:{port}/")
 
+    # Define the request handler
+    handler = http.server.SimpleHTTPRequestHandler
+    
+    # Create the server instance
+    httpd = socketserver.TCPServer((ip_address, port), handler)
+    
+    print(f"HTTP server started at http://{ip_address}:{port}/")
+    threading.Thread(target=httpd.serve_forever).start()
 def convert_to_mp4(h264_path, mp4_path):
     """Convert H.264 video to MP4."""
     result = subprocess.run(
@@ -129,28 +133,31 @@ def convert_to_mp4(h264_path, mp4_path):
 
 def camera():
     """Capture video and save it."""
-    picam2 = Picamera2()
-    video_config = picam2.create_video_configuration(main={"size": (1920, 1080)})
-    picam2.configure(video_config)
-    picam2.start()
-    sleep(2)
+    try:
+        picam2 = Picamera2(camera_num=0)  # Ensure the correct camera index
+        video_config = picam2.create_video_configuration(main={"size": (1920, 1080)})
+        picam2.configure(video_config)
+        picam2.start()
+        sleep(2)
 
-    video_h264_path = '/home/aoife/Videos/video1.h264'
-    video_mp4_path = '/home/aoife/Videos/video1.mp4'
-    encoder = H264Encoder(bitrate=1000000)
-    picam2.start_recording(encoder, video_h264_path)
-    print("Recording video...")
-    sleep(5)  # Record for 5 seconds
-    picam2.stop_recording()
-    picam2.stop()
+        video_h264_path = '/home/aoife/Videos/video1.h264'
+        video_mp4_path = '/home/aoife/Videos/video1.mp4'
+        encoder = H264Encoder(bitrate=1000000)
+        picam2.start_recording(encoder, video_h264_path)
+        print("Recording video...")
+        sleep(5)  # Record for 5 seconds
+        picam2.stop_recording()
+        picam2.stop()
 
-    convert_to_mp4(video_h264_path, video_mp4_path)
-    return video_mp4_path
+        convert_to_mp4(video_h264_path, video_mp4_path)
+        return video_mp4_path
+    except Exception as e:
+        print(f"Error in camera function: {e}")
+        return None
 
 
-def detect_loud_sound(threshold=1500, duration=10, rate=44100, channels=1, chunk_size=1024):
-   
-   # Detect loud sounds from the microphone.
+def detect_loud_sound(threshold=2000, duration=10, rate=44100, channels=1, chunk_size=1024):
+    """Detect loud sounds from the microphone."""
     p = pyaudio.PyAudio()
     stream = p.open(format=pyaudio.paInt16, channels=channels, rate=rate, input=True, frames_per_buffer=chunk_size)
 
@@ -163,7 +170,6 @@ def detect_loud_sound(threshold=1500, duration=10, rate=44100, channels=1, chunk
 
         if max_amplitude > threshold:
             print(f"Loud sound detected! Amplitude: {max_amplitude}")
-         
             send_sound_notification()
     stream.stop_stream()
     stream.close()
@@ -172,18 +178,21 @@ def detect_loud_sound(threshold=1500, duration=10, rate=44100, channels=1, chunk
 
 
 def send_sound_notification():
-    # Notify the app that a loud sound has been detected.
-    
-    message = {"sound_detected": True}
-   #pubnub.publish().channel(app_channel).message(message).sync()
-    print("Notification sent: Loud sound detected.")
-    pubnub.publish().channel('babysitter').message({'sound_alert': 'Baby is crying!'}).sync()
+    """Notify the app that a loud sound has been detected."""
+    global last_notification_time
 
+    current_time = time.time()
+    if current_time - last_notification_time > notification_interval:
+        last_notification_time = current_time
+        pubnub.publish().channel('babysitter').message({'sound_alert': 'Baby is crying!'}).sync()
+        print("Notification sent: Baby is crying!")
+    else:
+        print("Notification suppressed: Too soon since the last one.")
 
 def record_audio(file_path, duration=5, rate=44100, channels=1, chunk_size=1024):
     """Record audio from the microphone."""
     p = pyaudio.PyAudio()
-    stream = p.open(format=pyaudio.paInt16, channels=channels, rate=rate, input=True, frames_per_buffer=chunk_size)
+    stream = p.open(format=pyaudio.paInt16, channels=channels, rate=rate, input=True, frames_per_buffer=chunk_size,input_device_index=3)
     print("Recording audio...")
 
     frames = [stream.read(chunk_size) for _ in range(0, int(rate / chunk_size * duration))]
@@ -199,9 +208,8 @@ def record_audio(file_path, duration=5, rate=44100, channels=1, chunk_size=1024)
     print(f"Audio saved: {file_path}")
 
 
-
 def current_temperature(interval=2):
-
+    """Monitor the temperature and humidity."""
     dht_device = adafruit_dht.DHT22(board.D4)
 
     try:
@@ -217,55 +225,62 @@ def current_temperature(interval=2):
         if temperature and temperature > 26:
             alert_message = f"Alert! High temperature detected: {temperature}°C"
             print(alert_message)
-            pubnub.publish().channel('babysitter').message({'temp_alert': alert_message}).sync()
+            pubnub.publish().channel('babysitter').message({'high_alert': alert_message}).sync()
+        # If temperature is less than 16°C (too cold)
+        if temperature and temperature < 16:
+            alert_message = f"Alert! Low temperature detected: {temperature}°C"
+            print(alert_message)
+            pubnub.publish().channel('babysitter').message({'low_alert': alert_message}).sync()
 
     except RuntimeError as e:
         print(f"Error reading sensor: {e}")
 
 
-
+sound_thread = start_sound_detection()
+def stop_http_server():
+    """Stop the HTTP server."""
+    if httpd:
+        httpd.shutdown()
+        print("HTTP server stopped.")
+        
 def main():
-
-     # Start temperature monitoring
+    """Main loop for the system."""
+    # Temperature and humidity monitoring
     current_temperature()
 
-    video_path = camera()
+    # Video and audio recording
+    video_path = '/home/aoife/Videos/video1.mp4'
     audio_path = "/home/aoife/Videos/sound1.wav"
     os.makedirs(os.path.dirname(audio_path), exist_ok=True)
     record_audio(audio_path)
 
-    # Start HTTP server in the common directory
-    common_directory = os.path.dirname(video_path)
-    
-    #start_http_server(common_directory)
+    # Start HTTP server
     start_http_server("/home/aoife/Videos")
 
     # Construct URLs for video and audio
-    ip_address = "192.168.183.28"
+    ip_address = "192.168.219.28"
     video_url = f"http://{ip_address}:8000/{os.path.basename(video_path)}"
     audio_url = f"http://{ip_address}:8000/{os.path.basename(audio_path)}"
 
-
-    speakers()
-
     # Notify app
     notify_file_ready(video_url, audio_url)
-    sound_thread = start_sound_detection()
 
-    # Run the main logic
+    # Keep the main loop running
     while True:
         try:
-           
             print("Main application running... (Press Ctrl+C to stop)")
-            sleep(10)  
+            sleep(10) 
         except KeyboardInterrupt:
             break
-    handle_exit_signal(None, None)
+        except KeyboardInterrupt:
+            print("Main loop interrupted. Cleaning up...")
+        finally:
+            time.sleep(10)
+            stop_http_server()  
+        handle_exit_signal(None, None)
 
+  #  handle_exit_signal(None, None)
 
 if __name__ == "__main__":
     pubnub.add_listener(MySubscribeCallback())
-    detect_loud_sound(threshold=1000, duration=10)
-    current_temperature()
-    
     main()
