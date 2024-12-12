@@ -1,7 +1,35 @@
 {% extends "layout.html" %}
 {% block body %}
-<div class="videocontainer">
-    <h1>Settings</h1>
-</div>
-
+    <div class="container">
+        <h1>Settings</h1>
+        <div class="search-bar">
+            <input type="text" placeholder="Search settings...">
+        </div>
+        <div class="settings-types">
+            <div class="setting-type" onclick="toggleSettingsContent('account-settings')">Account</div>
+            <div class="setting-type" onclick="toggleSettingsContent('privacy-settings')">Privacy</div>
+            <div class="setting-type" onclick="toggleSettingsContent('video-sound-settings')">Video & Sound</div>
+            <div class="setting-type" onclick="toggleSettingsContent('video-sound-settings')">Notifications</div>
+            <div class="setting-type" onclick="toggleSettingsContent('video-sound-settings')">Admin/Host</div>
+            <div class="setting-type" onclick="toggleSettingsContent('log-out-settings')">Log out</div>
+        </div>
+        <div id="account-settings" class="settings-content">
+            <h2>Account Settings</h2>
+            <p>Manage your account settings here.</p>
+        </div>
+        <div id="privacy-settings" class="settings-content">
+            <h2>Privacy Settings</h2>
+            <p>Adjust your privacy preferences here.</p>
+        </div>
+        <div id="video-sound-settings" class="settings-content">
+            <h2>Video & Sound Settings</h2>
+            <p>Configure your video and sound settings here.</p>
+        </div>
+    </div>
+<script>
+    function toggleSettingsContent(id) {
+        const content = document.getElementById(id);
+        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+    }
+</script>
 {% endblock %}

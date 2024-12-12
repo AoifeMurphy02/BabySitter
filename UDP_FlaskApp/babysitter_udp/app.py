@@ -330,6 +330,13 @@ def settings():
     return render_template("settings.html", child_name=child_name)
 
 
+@app.route("/onboarding")
+def onboarding():
+    child_name
+    return render_template("onboarding.html", child_name=child_name)
+
+
+
 def download_and_save_file(file_url, file_type):
     try:
         # Get the file content
