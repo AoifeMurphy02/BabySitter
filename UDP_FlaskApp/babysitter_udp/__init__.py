@@ -1,4 +1,3 @@
-
 from flask import Flask, render_template, request, redirect, jsonify, url_for, flash, session
 from flask_mysqldb import MySQL
 from pubnub.pnconfiguration import PNConfiguration
@@ -56,21 +55,42 @@ pubnub =PubNub(pnconfig)
 
 db.init_app(app)
 
+channels = {
+    "babysitter": {"read": True, "write": True}  
+}
+
+channel_groups = {
+    "channel-group-babysitter": {"read": True}  
+}
+
+uuids = {
+    "babysitter": {"get": True, "update": True}  
+}
+
+print("Channels:", channels)
+print("Channel Groups:", channel_groups)
+print("UUIDs:", uuids)
+
+
+try:
+    envelope = pubnub.grant_token() \
+        .channels(channels) \
+        .groups(channel_groups) \
+        .uuids(uuids) \
+        .ttl(1440) \
+        .authorized_uuid("babysitter") \
+        #.sync()  # Execute the token grant
+   
+except PubNubException as e:
+    print(f"Error generating token: {e}")
+
 # granting access to post to channel
 
-def grant_access():
-    pubnub.grant()\
-        .channels("babysitter")\
-        .read(True)\
-        .write(True)\
-        .manage(True)\
-        .ttl(1440) #\
-       # .sync()
 
-grant_access()
 
 #VIDEO_URL = "http://192.168.183.28:8000/video1.mp4"
 #SOUND_URL = "http://192.168.183.28:8000/sound1.wav"
+
 VIDEO_URL = "default_video.mp4"
 SOUND_URL = "default_sound.wav"
 from pubnub.callbacks import SubscribeCallback
