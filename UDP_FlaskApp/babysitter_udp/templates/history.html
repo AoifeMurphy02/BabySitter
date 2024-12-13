@@ -1,7 +1,27 @@
+
 {% extends "layout.html" %}
 {% block body %}
-<div class="videocontainer">
-    <h1>History</h1>
+<div class="history-container">
+    <h1>Activity History</h1>
+    <p>View all recorded activities and events of {{ child_name }}.</p>
+    <div class="history-list">
+        <!-- Example of individual activity cards -->
+        <div class="activity-card">
+            <div class="activity-time">November 29, 2024, 10:45 AM</div>
+            <div class="activity-detail">Motion detected at front door.</div>
+            <button class="videobtn">
+                <video controls class="videobtn">
+                    <source src="{{ video_url }}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </button>
+        </div>        
+        <div class="activity-card">
+            <div class="activity-time">November 29, 2024, 09:15 AM</div>
+            <div class="activity-detail">Visitor detected at front door.</div>
+            <button class="view-details-btn">View Details</button>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

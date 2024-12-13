@@ -11,12 +11,14 @@ import my_db
 db= my_db.db
 
 
+
+
 # Function to emit a sound detection notification
 def notify_sound_detected():
    print('sound_alert', {'message': 'Sound detected!'})
 
 
-app = flask = Flask(__name__)
+app = flask = Flask(__name__, static_folder='static')
 
 
 
@@ -133,9 +135,19 @@ def index():
     secret_key = os.getenv("PUBNUB_SECRET_KEY") 
    
      
-    return render_template("index.html", sports=SPORTS, video_url=video_url, sound_url=sound_url, child_name=child_name, guardian_name1=guardian_name1, guardian_name2=guardian_name2, pubnub_subscribe_key=subscribe_key,  # Pass the PubNub Subscribe key to the template
-        pubnub_publish_key=publish_key)
+    return render_template("index.html",
+                            video_url=video_url, 
+                            sound_url=sound_url, 
+                            child_name=child_name, 
+                            guardian_name1=guardian_name1,
+                            guardian_name2=guardian_name2, 
+                            pubnub_subscribe_key=subscribe_key, 
+                            pubnub_publish_key=publish_key
+                            )
 
+@app.route('/static/<path:filename>')
+def serve_static_file(filename):
+    return send_from_directory(os.path.join(app.root_path, 'static'), filename)
 
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
@@ -166,7 +178,14 @@ def signup():
         flash('You have successfully signed up!', 'success')
         return redirect(url_for('login'))
     return render_template('signup.html')
+@app.route('/manifest.json')
+def serve_manifest():
+    return send_file('manifest.json', mimetype='application/manifest+json')
 
+@app.route('/sw.js')
+def serve_sw():
+    return send_file('sw.js', mimetype='application/javascript')
+    
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -309,6 +328,13 @@ def user():
 def settings():
     child_name
     return render_template("settings.html", child_name=child_name)
+
+
+@app.route("/onboarding")
+def onboarding():
+    child_name
+    return render_template("onboarding.html", child_name=child_name)
+
 
 
 def download_and_save_file(file_url, file_type):
