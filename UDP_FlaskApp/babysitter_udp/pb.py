@@ -6,15 +6,18 @@ from pubnub.crypto import PubNubCryptoModule, AesCbcCryptoModule, LegacyCryptoMo
 from pubnub.models.consumer.v3.channel import Channel
 from pubnub.models.consumer.v3.group import Group
 from pubnub.models.consumer.v3.uuid import UUID
-from .config import config
 
-cipher_key = config.get("PUBNUB_CIPHER_KEY")
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
+cipher_key = os.getenv("PUBNUB_CIPHER_KEY")
 
 pn_config = PNConfiguration()
-pn_config.publish_key = config.get("PUBNUB_PUBLISH_KEY")
-pn_config.subscribe_key = config.get("PUBNUB_SUBSCRIBE_KEY")
-pn_config.uuid = config.get("PUBNUB_UUID")
-pn_config.secret_key = config.get("PUBNUB_SECRET_KEY")
+pn_config.publish_key = os.getenv("PUBNUB_PUBLISH_KEY")
+pn_config.subscribe_key = os.getenv("PUBNUB_SUBSCRIBE_KEY")
+pn_config.uuid = os.getenv("PUBNUB_UUID")
+pn_config.secret_key = os.getenv("PUBNUB_SECRET_KEY")
 pn_config.cipher_key = cipher_key
 pn_config.cipher_mode = AES.MODE_GCM
 pn_config.fallback_cipher_mode = AES.MODE_CBC
@@ -22,6 +25,7 @@ pn_config.crypto_module = AesCbcCryptoModule(pn_config)
 pubnub = PubNub(pn_config)
 
 pi_channel = "babysitter"
+user_id = "babysitter"
 
 
 def grant_read_access(user_id):
@@ -47,9 +51,10 @@ def grant_read_and_write_access(user_id):
     envelope = pubnub.grant_token() \
     .channels([Channel.id("babysitter").read().write()]) \
     .authorized_uuid(user_id) \
-    .ttl(5) \
+    .ttl(3600) \
     .sync()
     return envelope.result.token
+
 
 
 def revoke_access(token):
