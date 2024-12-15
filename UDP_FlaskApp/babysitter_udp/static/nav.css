@@ -478,3 +478,14 @@ h4
     font-weight: bold;
     color: #333;
 }
+
+.applogo {
+    width: 100px; 
+    height: 100px; 
+    object-fit: cover;
+    margin: 0 auto;
+    display: block;
+    position: relative; 
+    z-index: 1; 
+}
+

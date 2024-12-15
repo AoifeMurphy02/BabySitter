@@ -1,67 +1,335 @@
 {% extends "layout.html" %}
 {% block body %}
 <style>
-    .auth-buttons {
+.usercontainer {
+    padding-top: 50px;
+    width: 90%;
+    margin: 0 auto;
+    font-family: 'Arial', sans-serif;
+    font-size: 1.5em;
+}
+.profile-header {
     display: flex;
-    gap: 10px;
-    justify-content: center;
     align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.auth-buttons .btn {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    text-decoration: none;
-    padding: 8px 12px;
+.profile-image {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.profile-info {
+    flex-grow: 4;
+}
+
+.profile-info h2 {
+    margin: 0;
+    font-size: 35px;
+    font-weight: bold;
+    color: #333;
+}
+
+.profile-info .age {
+    margin: 5px 0;
+    font-size: 25px;
+    color: #666;
+}
+
+.edit-profile-btn {
+    margin-top: 10px;
+    padding: 8px 16px;
     background-color: #B795E4;
-    color: white;
+    color: #fff;
+    border: none;
     border-radius: 5px;
-    font-size: 14px;
+    font-size: 20px;
+    cursor: pointer;
     transition: background-color 0.3s ease;
 }
 
-.auth-buttons .btn svg {
-    width: 16px;
-    height: 16px;
-}
-
-.auth-buttons .btn:hover {
+.edit-profile-btn:hover {
     background-color: #B795E4;
 }
 
-.auth-buttons .logout-button {
-    background-color: #B795E4;
+.statistics {
+    margin-top: 10px;
+    font-size: 25px;
+    color: #555;
 }
 
-.auth-buttons .logout-button:hover {
-    background-color: #B795E4;
+.statistics p {
+    margin: 0;
+    font-size: 0.5em;
 }
+#statsChart {
+    background-color: white;
+    width: 90%;
+    max-width: 600px;
+    margin: 20px auto;  
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#statsChart canvas {
+    width: 100% !important; 
+    height: auto !important; 
+}
+
+ .blockuser {
+        display: flex;
+        justify-content: space-between;
+        gap: 10px;
+        padding: 20px;
+    }
+    
+   /* Style for the first button */
+.blockuser button {
+    flex: 1;
+    font-size: 14px;
+    padding: 10px 10px;
+    border: 1px solid #ffffff;
+    border-radius: 8px;
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.blockuser button.button1 {
+    background-color: white; 
+}
+
+#editProfileForm
+{
+    padding: 20px;
+    gap: 15px; 
+}
+
+#editProfileForm select {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+#editProfileForm button {
+    margin-top: 15px; 
+    padding: 10px 20px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 20px 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    animation: slide-down 0.3s ease-out;
+    color: black;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-blend-mode: lighten;
+}
+
+.modal-content input {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.modal-content button {
+    padding: 10px 20px;
+    margin-right: 10px;
+    font-size: 1rem;
+    border: none;
+    background-color: #B795E4;
+    color: white;
+    border: 1px solid white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#saveProfileBtn {
+    background-color: #B795E4;
+    color: white;
+    border-radius: 5px;
+    border: 1px solid white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+}
+
+#saveProfileBtn:hover {
+    background-color: #45a049;
+}
+
+.modal-close {
+    background-color: #f44336;
+    color: white;
+}
+
+.modal-close:hover {
+    background-color: #d32f2f;
+}
+
+@keyframes slide-down {
+    from {
+        transform: translateY(-20%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
 
 </style>
-<div class="videocontainer">
-    <h1>Profile</h1>
 
-   
-    <div class="auth-buttons">
-        <!-- Login Button -->
-        <a href="/login" class="btn login-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-in-right" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M6.5 11a.5.5 0 0 1 .5-.5h4.793l-1.147-1.146a.5.5 0 1 1 .708-.708l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L11.293 11.5H7a.5.5 0 0 1-.5-.5z"/>
-                <path fill-rule="evenodd" d="M3.5 15A1.5 1.5 0 0 1 2 13.5v-11A1.5 1.5 0 0 1 3.5 1h9A1.5 1.5 0 0 1 14 2.5v11a1.5 1.5 0 0 1-1.5 1.5h-9zm9-1a.5.5 0 0 0 .5-.5v-11a.5.5 0 0 0-.5-.5h-9a.5.5 0 0 0-.5.5v11a.5.5 0 0 0 .5.5h9z"/>
-            </svg>
-            Login
-        </a>
-    
-        <!-- Logout Button -->
-        <a href="/logout" class="btn logout-button">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
-                <path fill-rule="evenodd" d="M10 15a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 1 0v11a.5.5 0 0 1-.5.5z"/>
-                <path fill-rule="evenodd" d="M7.354 10.354a.5.5 0 0 0 0-.708L4.707 7.5H13a.5.5 0 0 0 0-1H4.707l2.647-2.646a.5.5 0 0 0-.708-.708l-3.5 3.5a.5.5 0 0 0 0 .708l3.5 3.5a.5.5 0 0 0 .708 0z"/>
-            </svg>
-            Logout
-        </a>
-    </div>
-    
+<div class="usercontainer">
+    <div class="profile-header">
+        <div class="profile-image">
+            <img src="static/images/pretty.png" alt="Profile Picture" class="img-responsive">
+        </div>
+        <div class="profile-info">
+            <h2>{{ child_name }}</h2>
+            <p class="age">Age: {{ child_age }}</p>
+            <button class="edit-profile-btn" id="editProfileBtn">Edit Profile</button>
+            <div class="statistics">
+                <p><strong>{{ child_name }}'s Activity</strong></p>
+            </div>
+
+
+        </div>
+    </div>    
 </div>
+
+<div class="modal" id="editProfileModal">
+    <div class="modal-content">
+        <h3>Edit Profile</h3>
+       <form id="editProfileForm">
+                <input type="text" id="childNameInput" placeholder="Enter Name" value="{{ child_name }}">
+                <select class="form-control" id="child_age" name="child_age" required>
+                    <option value="" {% if not child_age %}selected{% endif %}>Select Age</option>
+                    <option value="0-12 weeks" {% if child_age == '0-12 weeks' %}selected{% endif %}>Newborn (0-12 Weeks)</option>
+                    <option value="3-6 months" {% if child_age == '3-6 months' %}selected{% endif %}>3-6 months</option>
+                    <option value="6-12 months" {% if child_age == '6-12 months' %}selected{% endif %}>6-12 months</option>
+                    <option value="12-18 months" {% if child_age == '12-18 months' %}selected{% endif %}>12-18 months</option>
+                    <option value="18-24 months" {% if child_age == '18-24 months' %}selected{% endif %}>18-24 months</option>
+                    <option value="2-3 years" {% if child_age == '2-3 years' %}selected{% endif %}>2-3 years</option>
+                    <option value="3-4 years" {% if child_age == '3-4 years' %}selected{% endif %}>3-4 years</option>
+                </select>
+            <button type="button" id="saveProfileBtn">Save</button>
+            <button type="button" class="modal-close" id="closeModalBtn">Cancel</button>
+        </form>
+    </div>
+</div>
+
+<div id="statsChart">
+    <canvas id="myChart"></canvas>
+</div>
+</div>
+<div class="blockuser">
+    <button class="button1">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-webcam" viewBox="0 0 16 16">
+            <path d="M0 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H9.269c.144.162.33.324.531.475a7 7 0 0 0 .907.57l.014.006.003.002A.5.5 0 0 1 10.5 13h-5a.5.5 0 0 1-.224-.947l.003-.002.014-.007a5 5 0 0 0 .268-.148 7 7 0 0 0 .639-.421c.2-.15.387-.313.531-.475H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z"/>
+            <path d="M8 6.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0m7 0a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/>
+          </svg>
+        Live View
+    </button>
+    <button class="button1">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
+            <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
+            <path d="M8 8a2 2 0 1 1 0-4 2 2 0 0 1 0 4m0 1a3 3 0 1 0 0-6 3 3 0 0 0 0 6"/>
+        </svg>
+       Bedroom
+    </button>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('myChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Crying', 'Moving'], 
+            datasets: [{
+                label: '{{ child_name }}\'s Activity',
+                data: [12, 19, 3, 5, 2],
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            },
+            responsive: true
+        }
+    });
+
+    // DOM elements
+const editProfileBtn = document.getElementById('editProfileBtn'); // The Edit Profile button
+const editProfileModal = document.getElementById('editProfileModal'); // The modal container
+const closeModalBtn = document.getElementById('closeModalBtn'); // The Cancel button
+
+// Show the modal when the Edit Profile button is clicked
+editProfileBtn.addEventListener('click', () => {
+    editProfileModal.style.display = 'flex'; // Show modal
+});
+
+// Close the modal when the Cancel button is clicked
+closeModalBtn.addEventListener('click', () => {
+    editProfileModal.style.display = 'none'; // Hide modal
+});
+
+// Close the modal when clicking outside the modal content
+window.addEventListener('click', (event) => {
+    if (event.target === editProfileModal) {
+        editProfileModal.style.display = 'none'; // Hide modal
+    }
+});
+
+</script>
+
 {% endblock %}
+
+<!-- /* user.html */ -->

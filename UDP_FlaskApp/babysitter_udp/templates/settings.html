@@ -6,13 +6,15 @@
             <input type="text" placeholder="Search settings...">
         </div>
         <div class="settings-types">
-            <div class="setting-type" onclick="toggleSettingsContent('account-settings')">Account</div>
-            <div class="setting-type" onclick="toggleSettingsContent('privacy-settings')">Privacy</div>
-            <div class="setting-type" onclick="toggleSettingsContent('video-sound-settings')">Video & Sound</div>
-            <div class="setting-type" onclick="toggleSettingsContent('video-sound-settings')">Notifications</div>
-            <div class="setting-type" onclick="toggleSettingsContent('video-sound-settings')">Admin/Host</div>
-            <div class="setting-type" onclick="toggleSettingsContent('log-out-settings')">Log out</div>
+            <div class="setting-type" onclick="toggleSettingsContent('account-settings', this)">Account</div>
+            <div class="setting-type" onclick="toggleSettingsContent('privacy-settings', this)">Privacy</div>
+            <div class="setting-type" onclick="toggleSettingsContent('video-sound-settings', this)">Video & Sound</div>
+            <div class="setting-type" onclick="toggleSettingsContent('notifications-settings', this)">Notifications</div>
+            <div class="setting-type" onclick="toggleSettingsContent('admin-host-settings', this)">Admin/Host</div>
+            <div class="setting-type" onclick="toggleSettingsContent('log-out-settings', this)">Log out</div>
         </div>
+
+        <!-- Setting Content Sections -->
         <div id="account-settings" class="settings-content">
             <h2>Account Settings</h2>
             <p>Manage your account settings here.</p>
@@ -25,11 +27,38 @@
             <h2>Video & Sound Settings</h2>
             <p>Configure your video and sound settings here.</p>
         </div>
+        <div id="notifications-settings" class="settings-content">
+            <h2>Notifications Settings</h2>
+            <p>Configure your notifications here.</p>
+        </div>
+        <div id="admin-host-settings" class="settings-content">
+            <h2>Admin/Host Settings</h2>
+            <p>Configure your admin and host settings here.</p>
+        </div>
+        <div id="log-out-settings" class="settings-content">
+            <h2>Log Out Settings</h2>
+            <p>Log out from the platform.</p>
+        </div>
     </div>
+
 <script>
-    function toggleSettingsContent(id) {
+    function toggleSettingsContent(id, element) {
         const content = document.getElementById(id);
-        content.style.display = content.style.display === 'block' ? 'none' : 'block';
+        const allContents = document.querySelectorAll('.settings-content');
+        
+        
+        allContents.forEach(function(item) {
+            if (item !== content) {
+                item.style.display = 'none'; 
+            }
+        });
+
+       
+        if (content.style.display === 'block') {
+            content.style.display = 'none'; 
+        } else {
+            content.style.display = 'block';  
+        }
     }
 </script>
 {% endblock %}
