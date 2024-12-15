@@ -6,10 +6,13 @@ from pubnub.exceptions import PubNubException
 from dotenv import load_dotenv
 import os, re ,bcrypt, requests, json
 from oauthlib.oauth2 import WebApplicationClient
+from Cryptodome.Cipher import AES 
+from pubnub.crypto import PubNubCryptoModule, AesCbcCryptoModule, LegacyCryptoModule
+from pubnub.models.consumer.v3.channel import Channel
+from pubnub.models.consumer.v3.group import Group
+from pubnub.models.consumer.v3.uuid import UUID
 import my_db
 db= my_db.db
-
-from pb import grant_read_access, grant_write_access, grant_read_and_write_access, revoke_access, parse_token
 
 
 
@@ -45,19 +48,28 @@ os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.getenv('GOOGLE_CLIENT_SECRET')
 GOOGLE_DISCOVERY_URL = "https://accounts.google.com/.well-known/openid-configuration"
-client = WebApplicationClient(GOOGLE_CLIENT_ID)
 
+
+client = WebApplicationClient(GOOGLE_CLIENT_ID)
+cipher_key = os.getenv("PUBNUB_CIPHER_KEY")
 # pubnub keys and ID
 pnconfig = PNConfiguration()
+
 pnconfig.subscribe_key =os.getenv("PUBNUB_SUBSCRIBE_KEY")
 pnconfig.publish_key =os.getenv("PUBNUB_PUBLISH_KEY")
 pnconfig.secret_key =os.getenv("PUBNUB_SECRET")   
-pnconfig.uuid =os.getenv("PUBNUB_UUID") 
-
+pnconfig.uuid =os.getenv("PUBNUB_NAME") 
+pnconfig.cipher_key = cipher_key
+pnconfig.cipher_mode = AES.MODE_GCM
+pnconfig.fallback_cipher_mode = AES.MODE_CBC
+pnconfig.crypto_module = AesCbcCryptoModule(pnconfig)
 pubnub =PubNub(pnconfig)
 
 db.init_app(app)
-"""
+
+print(f"Flask Secret Key: {os.getenv('SECRET_KEY')}")
+print(f"PubNub Secret Key: {os.getenv('PUBNUB_SECRET')}")
+
 channels = {
     "babysitter": {"read": True, "write": True}  
 }
@@ -76,6 +88,7 @@ print("UUIDs:", uuids)
 
 
 try:
+    # Generate the token using correctly structured resources
     envelope = pubnub.grant_token() \
         .channels(channels) \
         .groups(channel_groups) \
@@ -83,12 +96,9 @@ try:
         .ttl(1440) \
         .authorized_uuid("babysitter") \
         #.sync()  # Execute the token grant
-   
+    
 except PubNubException as e:
     print(f"Error generating token: {e}")
-
-"""
-
 
 #VIDEO_URL = "http://192.168.183.28:8000/video1.mp4"
 #SOUND_URL = "http://192.168.183.28:8000/sound1.wav"
@@ -140,47 +150,32 @@ SPORTS = ["Basketball", "Badminton","Volleyball"]
 REGISTRANTS = {}
 
 
-"""
-# PubNub Configuration
-pnconfig = PNConfiguration()
-pnconfig.subscribe_key = os.getenv("PUBNUB_SUBSCRIBE_KEY")
-pnconfig.publish_key = os.getenv("PUBNUB_PUBLISH_KEY")
-pnconfig.secret_key = os.getenv("PUBNUB_SECRET_KEY")
-pnconfig.uuid = os.getenv("PUBNUB_UUID")
+guardian_name1 = "John"
+guardian_name2 = "Jane"
+child_name = "Meghan"
 
-pubnub = PubNub(pnconfig)
-"""
-
-@app.route("/", methods=["GET", "POST"])
+@app.route("/", methods=["GET","POST"])
 def index():
-    # Mock data for child and guardian names
-    guardian_name1 = "John"
-    guardian_name2 = "Jane"
-    child_name = "Meghan"
-    user_id = "babysitter" 
+    child_name
+    guardian_name1
+    video_url = VIDEO_URL 
+    sound_url = SOUND_URL
+
     
-    try:
-        token = grant_read_and_write_access(user_id)
-        print(f"Token generated: {token}")
-    except Exception as e:
-        print(f"Error generating token: {e}")
-        token = None
-
-    return render_template(
-        "index.html",
-        video_url=VIDEO_URL,
-        sound_url=SOUND_URL,
-        child_name=child_name,
-        guardian_name1=guardian_name1,
-        guardian_name2=guardian_name2,
-        pubnub_subscribe_key=pnconfig.subscribe_key,
-        pubnub_publish_key=pnconfig.publish_key,
-        pubnub_token=token
-    )
-
-if __name__ == "__main__":
-    app.run(debug=True)
-
+    subscribe_key = os.getenv("PUBNUB_SUBSCRIBE_KEY")
+    publish_key = os.getenv("PUBNUB_PUBLISH_KEY")
+    secret_key = os.getenv("PUBNUB_SECRET_KEY") 
+   
+     
+    return render_template("index.html",
+                            video_url=video_url, 
+                            sound_url=sound_url, 
+                            child_name=child_name, 
+                            guardian_name1=guardian_name1,
+                            guardian_name2=guardian_name2, 
+                            pubnub_subscribe_key=subscribe_key, 
+                            pubnub_publish_key=publish_key
+                            )
 
 @app.route('/static/<path:filename>')
 def serve_static_file(filename):
@@ -439,14 +434,14 @@ def add_sound():
 
 
 # publish message to pubnub
-"""
+
 @app.route('/publish', methods=['POST'])
 def publish_message():
     message = request.json.get('message')
     if message:
         try:
             
-            response = pubnub.publish().channel('babysitter').message({'text': message}).sync()
+            response = pubnub.publish().channel('New-channel').message({'text': message}).sync()
 
             # sucess
             response_data = {
@@ -461,49 +456,7 @@ def publish_message():
         return jsonify({'status': 'error', 'message': 'No message provided'}), 400
 
     # return render_template("success.html")
-"""
-@app.route('/publish', methods=['POST'])
-def publish_message():
-    message = request.json.get('message')
-    
-    if not message:
-        return jsonify({'status': 'error', 'message': 'No message provided'}), 400
-    
-    user_id = "your_user_id"  # Replace with actual user ID logic
-    try:
-        # Grant read and write access (or use an existing token)
-        token = grant_read_and_write_access(user_id)
-        token_details = parse_token(token)
-        print(token_details)  # Check the permissions here
 
-
-        # Publish the message using the token
-        response = pubnub.publish() \
-            .channel('babysitter') \
-            .message({'text': message}) \
-            .token(token) \
-            .sync()
-
-        if response.status.is_error():
-            error_message = response.status.error_data.message
-            print(f"Error publishing message: {error_message}")
-            return jsonify({
-                'status': 'error',
-                'message': f"Error publishing message: {error_message}",
-                'status_code': response.status.status_code
-    }), 500
-
-
-        return jsonify({
-            'status': 'success',
-            'message': 'Message published successfully',
-            'status_code': response.status.status_code
-        })
-
-    except PubNubException as e:
-        return jsonify({'status': 'error', 'message': str(e)}), 500
-    except Exception as e:
-        return jsonify({'status': 'error', 'message': f"Unexpected error: {str(e)}"}), 500
 
 if __name__ == "__main__":
     subscribe_to_pubnub()

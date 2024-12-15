@@ -20,6 +20,7 @@ import RPi.GPIO as GPIO
 import http.server
 import socketserver
 import threading
+import pygame
 
 
 httpd = None
@@ -38,6 +39,7 @@ class Listener(SubscribeListener):
 config = PNConfiguration()
 config.subscribe_key = os.getenv("PUBNUB_SUBSCRIBE_KEY")
 config.publish_key = os.getenv("PUBNUB_PUBLISH_KEY")
+config.secret_key =os.getenv("PUBNUB_SECRET")   
 config.user_id = "pi"
 
 pubnub = PubNub(config)
@@ -49,7 +51,9 @@ class MySubscribeCallback(SubscribeCallback):
     def message(self, pubnub, message):
         """Handle incoming messages."""
         if message.message == "play_music":
-            print("Received 'play_music' message. (No speakers, ignoring message)")
+            print("Received 'play_music' message. (No speakers)")
+            file_path = "/home/aoife/Videos/music.wav"
+            play_audio(file_path)
 
 # Global flag to control the sound detection loop
 sound_detection_active = True
@@ -242,7 +246,23 @@ def stop_http_server():
     if httpd:
         httpd.shutdown()
         print("HTTP server stopped.")
+
+def play_audio(file_path):
+    """Play an audio file through the speakers."""
+    try:
+        print(f"Playing audio: {file_path}")
+        pygame.mixer.music.load(file_path)
+        pygame.mixer.music.play()
         
+        # Wait for the audio to finish
+        while pygame.mixer.music.get_busy():
+            time.sleep(5)
+    except Exception as e:
+        print(f"Error playing audio: {e}")
+    finally:
+        pygame.mixer.music.stop() 
+
+
 def main():
     """Main loop for the system."""
     # Temperature and humidity monitoring
