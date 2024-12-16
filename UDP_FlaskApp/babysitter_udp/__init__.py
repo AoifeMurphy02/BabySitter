@@ -20,6 +20,9 @@ def notify_sound_detected():
 
 app = flask = Flask(__name__, static_folder='static')
 
+#@app.route('/')
+#def home():
+#   return "Flask is rnning!"
 
 
 load_dotenv()
