@@ -153,29 +153,57 @@ REGISTRANTS = {}
 guardian_name1 = "John"
 guardian_name2 = "Jane"
 child_name = "Meghan"
+app_name = "Babysitter"
+child_age = 1
 
-@app.route("/", methods=["GET","POST"])
-def index():
-    child_name
-    guardian_name1
-    video_url = VIDEO_URL 
-    sound_url = SOUND_URL
+# @app.route("/", methods=["GET","POST"])
+# def index():
+#     child_name
+#     guardian_name1
+#     video_url = VIDEO_URL 
+#     sound_url = SOUND_URL
 
     
-    subscribe_key = os.getenv("PUBNUB_SUBSCRIBE_KEY")
-    publish_key = os.getenv("PUBNUB_PUBLISH_KEY")
-    secret_key = os.getenv("PUBNUB_SECRET_KEY") 
+#     subscribe_key = os.getenv("PUBNUB_SUBSCRIBE_KEY")
+#     publish_key = os.getenv("PUBNUB_PUBLISH_KEY")
+#     secret_key = os.getenv("PUBNUB_SECRET_KEY") 
    
      
-    return render_template("index.html",
-                            video_url=video_url, 
-                            sound_url=sound_url, 
-                            child_name=child_name, 
-                            guardian_name1=guardian_name1,
-                            guardian_name2=guardian_name2, 
-                            pubnub_subscribe_key=subscribe_key, 
-                            pubnub_publish_key=publish_key
-                            )
+#     return render_template("index.html",
+#                             video_url=video_url, 
+#                             sound_url=sound_url, 
+#                             child_name=child_name, 
+#                             guardian_name1=guardian_name1,
+#                             guardian_name2=guardian_name2, 
+#                             pubnub_subscribe_key=subscribe_key, 
+#                             pubnub_publish_key=publish_key
+#                             )
+@app.route("/", methods=["GET", "POST"])
+def index():
+    # Check if user is logged in
+    user = session.get('user')
+    if not user:
+        return redirect(url_for('login'))
+    
+    # Retrieve additional session data if needed
+    user_picture = session.get('picture')
+    video_url = VIDEO_URL
+    sound_url = SOUND_URL
+
+    # Render the index page with user and app data
+    return render_template(
+        "index.html", 
+        sports=SPORTS, 
+        video_url=video_url, 
+        sound_url=sound_url,
+        child_name=child_name, 
+        guardian_name1=guardian_name1, 
+        guardian_name2=guardian_name2,
+        user=user, 
+        app_name=app_name, 
+        user_picture=user_picture
+    )
+
 
 @app.route('/static/<path:filename>')
 def serve_static_file(filename):
@@ -218,23 +246,55 @@ def serve_manifest():
 def serve_sw():
     return send_file('sw.js', mimetype='application/javascript')
     
+# @app.route('/login', methods=['GET', 'POST'])
+# def login():
+#     if request.method == 'POST':
+#         email = request.form['email']
+#         password = request.form['password']
+        
+#         user = my_db.get_babysitter_by_email(email)
+        
+#         if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
+#             session['email'] = user.email
+#             session['name'] = user.name
+#             session['user_name'] = user.user_name
+#             flash('Login successful!', 'success')
+#             return redirect(url_for('loggedin'))
+#         else:
+#             flash('Invalid email or password. Please try again.', 'danger')
+#     return render_template('login.html')
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    app_name = "Demo App"  # App name for context
+
     if request.method == 'POST':
-        email = request.form['email']
-        password = request.form['password']
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        # Check against hardcoded users
+        user = verify_user(email, password)
         
-        user = my_db.get_babysitter_by_email(email)
-        
-        if user and bcrypt.checkpw(password.encode('utf-8'), user.password.encode('utf-8')):
-            session['email'] = user.email
-            session['name'] = user.name
-            session['user_name'] = user.user_name
-            flash('Login successful!', 'success')
-            return redirect(url_for('loggedin'))
-        else:
-            flash('Invalid email or password. Please try again.', 'danger')
-    return render_template('login.html')
+        if not user:
+            # Optionally, check against database-backed users (if implemented)
+            user = my_db.get_babysitter_by_email(email)
+            if user and bcrypt.checkpw(password.encode('utf-8'), user['password'].encode('utf-8')):
+                user['role'] = 'user'  # Assign default role if not present
+            else:
+                flash('Invalid email or password.', 'danger')
+                return render_template('login.html', app_name=app_name)
+
+        # Successful login: Store user data in session
+        session['user'] = user
+        session['email'] = user.get('email')
+        session['user_name'] = user.get('username')
+        session['name'] = user.get('name', 'User')
+        session['role'] = user.get('role', 'user')
+        flash('Login successful!', 'success')
+        return redirect(url_for('index'))
+
+    return render_template('login.html', app_name=app_name)
+
 
 @app.route('/login/google')
 def google_login():
@@ -344,16 +404,25 @@ def sound():
     return render_template("sound.html", sound_url=SOUND_URL)
 
 
+
 @app.route("/history")
 def history():
     child_name
     return render_template("history.html", child_name=child_name)
 
 
+@app.route("/onboarding")
+def onboarding():
+    child_name
+    return render_template("onboarding.html", child_name=child_name)
+
+
 @app.route("/user")
 def user():
+    # user_picture = session.get('picture')
     child_name
-    return render_template("user.html", child_name=child_name)
+    child_age
+    return render_template("user.html", child_name=child_name, child_age=child_age, app_name=app_name)
 
 
 @app.route("/settings")
@@ -362,10 +431,13 @@ def settings():
     return render_template("settings.html", child_name=child_name)
 
 
-@app.route("/onboarding")
-def onboarding():
+@app.route("/Parent")
+def parent():
     child_name
-    return render_template("onboarding.html", child_name=child_name)
+    guardian_name1=user['name']
+    guardian_name2
+
+    return render_template("Parent.html", child_name=child_name, guardian_name1=guardian_name1, guardian_name2=guardian_name2)
 
 
 

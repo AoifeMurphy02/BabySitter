@@ -1,0 +1,228 @@
+{% extends "layout.html" %}
+
+{% block body %}
+<style>
+    body {
+    font-family: 'Arial', sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #f5f5f5; 
+}
+.container {
+    display: flex;
+    flex-direction: column;   
+    align-items: center;   
+    /* max-width: 600px; */
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #4e3c64;
+}
+
+
+button, .edit-baby-btn, .confirm-baby-btn, .invite-babysitter-btn, .add-parent-btn, .add-baby-btn {
+    display: block;         
+    width: 70%;            
+    margin: 10px 0;  
+    padding: 10px 15px;
+    border-radius: 8px;
+    border: none;
+    background-color: #B795E4;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, box-shadow 0.3s;
+    text-align: center;      
+}
+
+button:hover, .edit-baby-btn:hover, .confirm-baby-btn:hover, .invite-babysitter-btn:hover, .add-parent-btn:hover, .add-baby-btn:hover {
+    background-color: #9C7EC0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+
+label {
+    font-size: 14px;
+    color: #4e3c64;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
+}
+
+input, select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #92929d;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    font-size: 14px;
+    color: #333;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input:focus, select:focus {
+    border-color: #B795E4;
+    outline: none;
+    box-shadow: 0 0 5px rgba(183, 149, 228, 0.5);
+}
+
+.onboarding-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4e3c64;
+    color: #fff;
+    font-weight: bold;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.onboarding-button:hover {
+    background-color: #3d2d50;
+}
+
+.confirm-baby, .form-section {
+    padding: 15px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #fff;
+    margin-top: 20px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+.confirm-baby h2 {
+    color: #4e3c64;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.confirm-baby p {
+    font-size: 14px;
+    color: #555;
+}
+
+.edit-baby-btn, .confirm-baby-btn {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    color: white;
+    background-color: #B795E4;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.edit-baby-btn:hover, .confirm-baby-btn:hover {
+    background-color: #9C7EC0;
+}
+
+.invite-babysitter-btn, .add-parent-btn, .add-baby-btn {
+    margin: 10px 0;
+    display: inline-block;
+}
+
+</style>
+<div class="container">
+    <h1>Parent Host Controls</h1>
+
+
+       <!-- Invite Babysitter Button -->
+    <button class="invite-babysitter-btn" onclick="toggleInviteBabysitterForm()">Invite Babysitter</button>
+
+    <!-- Invite Babysitter Form -->
+    <div id="invite-babysitter-form" style="display: none; margin-top: 20px;">
+        <p>Invite a babysitter through an email link. The link will expire in 24 hours, and the session is valid for 24 hours only.</p>
+        <label for="babysitter_email">Babysitter's Email</label>
+        <input type="email" class="form-control" id="babysitter_email" name="babysitter_email" required>
+
+        <label for="permissions">Set Permissions:</label>
+        <div>
+            <label><input type="checkbox" id="view_history" name="permissions" value="history"> Baby History</label>
+            <label><input type="checkbox" id="view_statistics" name="permissions" value="statistics"> Statistics</label>
+        </div>
+
+        <button type="button" class="onboarding-button" onclick="sendBabysitterInvite(event)">Send Invite</button>
+    </div>
+
+ <!-- Add Parent Button -->
+ <button class="add-parent-btn" onclick="toggleAddParentForm()">Add Parent</button>
+
+ <!-- Add Parent Form -->
+ <div id="add-parent-form" style="display: none; margin-top: 20px;">
+     <label for="guardian_name2">Enter their Name</label>
+     <input type="text" class="form-control" id="guardian_name2" name="guardian_name2" required>
+
+     <label for="guardian_email2">Enter their Email</label>
+     <input type="email" class="form-control" id="guardian_email2" name="guardian_email2" required>
+
+     <label for="guardian_phone2">Enter their Phone Number</label>
+     <input type="tel" class="form-control" id="guardian_phone2" name="guardian_phone2" required>
+
+     <label for="guardian_relationship2">Enter your Relationship with Them</label>
+     <select class="form-control" id="guardian_relationship2" name="guardian_relationship2" required>
+         <option value="">Select Relationship</option>
+         <option value="Parent">Parent</option>
+         <option value="Grandparent">Grandparent</option>
+         <option value="Aunt">Aunt</option>
+         <option value="Uncle">Uncle</option>
+         <option value="Babysitter">Babysitter</option>
+         <option value="Other">Other</option>
+     </select>
+
+     <button type="button" class="onboarding-button" onclick="completeAddParentForm(event)">Submit</button>
+ </div>
+
+    <!-- add baby -->
+   <!-- Add Baby Button -->
+   <button class="add-baby-btn" onclick="toggleAddBabyForm()">Add Baby</button>
+
+   <!-- Add Baby Form -->
+   <div id="add-baby-form" style="display: none; margin-top: 20px;">
+       <label for="child_name">Enter your Baby's Name</label>
+       <input type="text" class="form-control" id="child_name" name="child_name" required>
+       <button type="button" class="onboarding-button" onclick="validateStep(1)">Next</button>
+   </div>
+
+   <!-- Baby Age Section -->
+   <div class="form-section" id="step2" style="display: none; margin-top: 20px;">
+       <label for="child_age">Enter your Baby's Age</label>
+       <select class="form-control" id="child_age" name="child_age" required>
+           <option value="">Select Age</option>
+           <option value="0-12 weeks">Newborn (0-12 Weeks)</option>
+           <option value="3-6 months">3-6 months</option>
+           <option value="6-12 months">6-12 months</option>
+           <option value="12-18 months">12-18 months</option>
+           <option value="18-24 months">18-24 months</option>
+           <option value="2-3 years">2-3 years</option>
+           <option value="3-4 years">3-4 years</option>
+       </select>
+       <button type="button" class="onboarding-button" onclick="validateStep(2)">Next</button>
+   </div>
+
+   <!-- Confirm Baby Details Section -->
+   <div class="confirm-baby" style="display: none; margin-top: 20px;">
+       <h2>Confirm Baby Details</h2>
+       <p>Child Name: <span id="childName"></span></p>
+       <p>Child Age: <span id="childAge"></span></p>
+       <p>Guardian Name: <span id="guardianName"></span></p>
+       <p>Guardian Email: <span id="guardianEmail"></span></p>
+       <p>Guardian Phone: <span id="guardianPhone"></span></p>
+       <p>Guardian Relationship: <span id="guardianRelationship"></span></p>
+
+       <!-- Action Buttons -->
+       <button class="edit-baby-btn" onclick="editBaby()">Edit</button>
+       <button class="confirm-baby-btn" onclick="confirmBaby()">Confirm</button>
+   </div>
+</div>
+{% endblock %}
