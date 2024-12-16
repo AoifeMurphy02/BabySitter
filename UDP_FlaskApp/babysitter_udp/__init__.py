@@ -12,9 +12,6 @@ db= my_db.db
 from pb import grant_read_access, grant_write_access, grant_read_and_write_access, revoke_access, parse_token
 
 
-
-
-
 # Function to emit a sound detection notification
 def notify_sound_detected():
    print('sound_alert', {'message': 'Sound detected!'})

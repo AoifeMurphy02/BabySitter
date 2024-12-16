@@ -67,8 +67,8 @@ pubnub =PubNub(pnconfig)
 
 db.init_app(app)
 
-print(f"Flask Secret Key: {os.getenv('SECRET_KEY')}")
-print(f"PubNub Secret Key: {os.getenv('PUBNUB_SECRET')}")
+#print(f"Flask Secret Key: {os.getenv('SECRET_KEY')}")
+#print(f"PubNub Secret Key: {os.getenv('PUBNUB_SECRET')}")
 
 channels = {
     "babysitter": {"read": True, "write": True}  
@@ -150,6 +150,7 @@ SPORTS = ["Basketball", "Badminton","Volleyball"]
 REGISTRANTS = {}
 
 
+
 guardian_name1 = "John"
 guardian_name2 = "Jane"
 child_name = "Meghan"
@@ -181,12 +182,12 @@ child_age = 1
 @app.route("/", methods=["GET", "POST"])
 def index():
     # Check if user is logged in
-    user = session.get('user')
-    if not user:
-        return redirect(url_for('login'))
+   # user = session.get('user')
+   # if not user:
+    #    return redirect(url_for('login'))
     
     # Retrieve additional session data if needed
-    user_picture = session.get('picture')
+   # user_picture = session.get('picture')
     video_url = VIDEO_URL
     sound_url = SOUND_URL
 
@@ -201,7 +202,7 @@ def index():
         guardian_name2=guardian_name2,
         user=user, 
         app_name=app_name, 
-        user_picture=user_picture
+       # user_picture=user_picture
     )
 
 
