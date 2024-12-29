@@ -3,7 +3,8 @@
 <div class="bodycon">
     <div class="containerindex">
         <h2 class="mb-4welcome" >Welcome Back, {{ guardian_name1 }}</h2>
-        <form action="/register" method="POST">
+       <!--<form action="/register" method="POST">--> 
+        <form method="POST"></form>
             <div class="mb-3">
                 <div class="Dashboard">  
                     <h4>{{ child_name }}</h4>
@@ -16,10 +17,10 @@
                         Your browser does not support the audio tag.
                     </audio>
 
-                    <video id="myVideo" controls autoplay style="width: 100%; height: auto; max-height: 60vh;">
+                 <!-- <video id="myVideo" controls autoplay style="width: 100%; height: auto; max-height: 60vh;">
                         <source src="{{ url_for('static', filename='images/babyvideodemo.mp4') }}" type="video/mp4" class="responsive-img">
                         Your browser does not support the video tag.
-                    </video>
+                    </video>-->  
                 </div>
             </div>
         <h4>Status</h4>
@@ -28,8 +29,8 @@
         </div>
 
           <div>
-            <h4>Current Temperature: <span id="current_temp">Loading...</span></h4>
-            <h4>Current Humidity: <span id="current_humidity">Loading...</span></h4>
+            <h4>Current Temperature: <span id="current_temp">25</span></h4>
+            <h4>Current Humidity: <span id="current_humidity">45%</span></h4>
         </div>
 
         <div id="highAlert" style="display:none; color: red; font-size: 20px; font-weight: bold;">
@@ -124,7 +125,7 @@
 
             
         </form>
-        <button class="buttonmusic" onclick="sendPlayMusicCommand()">Music</button>
+      <!-- <button class="buttonmusic" onclick="sendPlayMusicCommand()">Music</button>--> 
 
        
     </div>
@@ -134,6 +135,7 @@
     const pubnub = new PubNub({
         publishKey: "{{ pubnub_publish_key }}",
         subscribeKey: "{{ pubnub_subscribe_key }}",
+        secretKey: "{{ pubnub_secret_key }}",
         uuid: "{{ pubnub_uuid }}"
     });
 
