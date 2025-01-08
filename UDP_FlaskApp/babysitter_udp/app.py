@@ -387,10 +387,9 @@ def register():
     return redirect("/registrants")
 
 
-@app.route("/video")
+@app.route('/video')
 def video():
-    child_name
-    return render_template("video.html", video_url=VIDEO_URL, child_name=child_name)
+    return render_template('video.html', video_url="default_video.mp4", child_name="Your Baby")
 
 
 @app.route("/sound")
@@ -528,3 +527,5 @@ def publish_message():
 if __name__ == "__main__":
     subscribe_to_pubnub()
     app.run(debug=True)
+
+    

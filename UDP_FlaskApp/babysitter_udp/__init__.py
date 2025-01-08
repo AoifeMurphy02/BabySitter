@@ -11,6 +11,20 @@ db= my_db.db
 
 from pb import grant_read_access, grant_write_access, grant_read_and_write_access, revoke_access, parse_token
 
+from flask import Flask
+from dotenv import load_dotenv
+import os
+
+# Load environment variables
+load_dotenv()
+
+app = Flask(__name__)
+app.secret_key = os.getenv('SECRET_KEY')
+
+# Configure upload folder
+app.config['UPLOAD_FOLDER'] = os.path.abspath('uploads')
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+
 
 
 
@@ -25,6 +39,11 @@ app = flask = Flask(__name__, static_folder='static')
 #@app.route('/')
 #def home():
 #   return "Flask is rnning!"
+guardian_name1 = "John"
+guardian_name2 = "Jane"
+child_name = "Your Baby"
+app_name = "Babysitter"
+child_age = 1
 
 
 load_dotenv()
@@ -42,6 +61,11 @@ app.config['SQLALCHEMY_DATABASE_URI'] = (
 # Disables OAuth 2 https requirement. (FOR TESTING ONLY)
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
 
+
+
+# Configure your app (like database, upload folder, etc.)
+app.config['UPLOAD_FOLDER'] = os.path.abspath('uploads')
+os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # Google OAuth 2
 
@@ -181,43 +205,43 @@ def index():
         pubnub_token=token
     )
 
-if __name__ == "__main__":
-    app.run(debug=True)
-
 
 @app.route('/static/<path:filename>')
 def serve_static_file(filename):
     return send_from_directory(os.path.join(app.root_path, 'static'), filename)
-
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
-        user_name = request.form['username']
-        password = request.form['password']
-        email = request.form['email']
-        
-        # Check if email is valid
-        email_pattern = r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$'
-        if not re.match(email_pattern, email):
-            flash('Invalid email address. Please enter a valid email.', 'danger')
-            return render_template('signup.html')
+        try:
+            user_name = request.form['username']
+            password = request.form['password']
+            email = request.form['email']
+            
+            # Validate email
+            if not re.match(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', email):
+                flash('Invalid email address.', 'danger')
+                return render_template('signup.html')
 
-        # Password requirements check
-        if not re.fullmatch(r'^(?=.*[A-Z])(?=.*\d).{8,}$', password):
-            flash('Password must be at least 8 characters long, contain at least one digit, and one uppercase letter.', 'danger')
-            return render_template('signup.html')
-        
-        # Check if email already exists
-        existing_user = my_db.get_babysitter_by_email(email)
-        if existing_user:
-            flash('Email already registered. Please choose a different email.', 'danger')
-            return render_template('signup.html')
+            # Check password
+            if not re.fullmatch(r'^(?=.*[A-Z])(?=.*\d).{8,}$', password):
+                flash('Password must be at least 8 characters long, contain one digit and one uppercase letter.', 'danger')
+                return render_template('signup.html')
 
-        # Save user to database
-        my_db.add_babysitter(user_name=user_name, name='', password=password, email=email)
-        flash('You have successfully signed up!', 'success')
-        return redirect(url_for('login'))
+            # Check if email exists
+            existing_user = my_db.get_babysitter_by_email(email)
+            if existing_user:
+                flash('Email already registered.', 'danger')
+                return render_template('signup.html')
+
+            # Save user to database
+            my_db.add_babysitter(user_name=user_name, name='', password=password, email=email)
+            flash('You have successfully signed up!', 'success')
+            return redirect(url_for('login'))
+        except Exception as e:
+            flash(f'An error occurred: {str(e)}', 'danger')
+            return render_template('signup.html')
     return render_template('signup.html')
+
 @app.route('/manifest.json')
 def serve_manifest():
     return send_file('manifest.json', mimetype='application/manifest+json')
@@ -225,6 +249,9 @@ def serve_manifest():
 @app.route('/sw.js')
 def serve_sw():
     return send_file('sw.js', mimetype='application/javascript')
+    
+
+
     
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -339,11 +366,11 @@ def register():
     REGISTRANTS[name] = sport
     return redirect("/registrants")
 
-
-@app.route("/video")
+@app.route('/video')
 def video():
     child_name
-    return render_template("video.html", video_url=VIDEO_URL, child_name=child_name)
+    return render_template('video.html', video_url="default_video.mp4", child_name=child_name)
+
 
 
 @app.route("/sound")
@@ -378,13 +405,11 @@ def onboarding():
 
 
 def download_and_save_file(file_url, file_type):
-    try:
-        # Get the file content
+    try: 
         response = requests.get(file_url, stream=True)
-        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
-        
-        # Determine the file name and path
-        file_name = file_url.split("/")[-1]  # Get the file name from the URL
+        response.raise_for_status()   
+         
+        file_name = file_url.split("/")[-1]  
         if file_type == 'video':
             sub_dir = 'videos'
         elif file_type == 'sound':
@@ -396,13 +421,13 @@ def download_and_save_file(file_url, file_type):
         save_path = os.path.join(app.config['UPLOAD_FOLDER'], sub_dir)
         os.makedirs(save_path, exist_ok=True)
         
-        # Save the file locally
+ 
         file_path = os.path.join(save_path, file_name)
         with open(file_path, 'wb') as f:
             for chunk in response.iter_content(chunk_size=8192):
                 f.write(chunk)
 
-        return file_path  # Return the local path of the saved file
+        return file_path   
     except requests.RequestException as e:
         raise RuntimeError(f"Error downloading file: {e}")
 
@@ -414,10 +439,9 @@ def add_video():
         return jsonify({'status': 'error', 'message': 'No video URL provided'}), 400
 
     try:
-        # Download and save the video file locally
+ 
         local_path = download_and_save_file(video_url, 'video')
-        
-        # Add the local file path to the database
+         
         my_db.add_baby_data(camera_feed_path=local_path)
         return jsonify({'status': 'success', 'message': 'Video saved successfully', 'path': local_path})
     except RuntimeError as e:
@@ -430,11 +454,9 @@ def add_sound():
     if not sound_url:
         return jsonify({'status': 'error', 'message': 'No sound URL provided'}), 400
 
-    try:
-        # Download and save the sound file locally
+    try: 
         local_path = download_and_save_file(sound_url, 'sound')
-        
-        # Add the local file path to the database
+         
         my_db.add_baby_data(audio=local_path)
         return jsonify({'status': 'success', 'message': 'Sound saved successfully', 'path': local_path})
     except RuntimeError as e:
@@ -465,6 +487,8 @@ def publish_message():
 
     # return render_template("success.html")
 """
+
+
 @app.route('/publish', methods=['POST'])
 def publish_message():
     message = request.json.get('message')
@@ -507,6 +531,7 @@ def publish_message():
         return jsonify({'status': 'error', 'message': str(e)}), 500
     except Exception as e:
         return jsonify({'status': 'error', 'message': f"Unexpected error: {str(e)}"}), 500
+
 
 if __name__ == "__main__":
     subscribe_to_pubnub()
