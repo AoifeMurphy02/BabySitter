@@ -15,6 +15,40 @@ video {
     display: block;
 }
 
+.vertical-video {
+    width: auto; 
+    height: 50vh;  
+    object-fit: cover; 
+    margin: 0 auto;
+    display: block;
+}
+
+
+ 
+.audio-container {
+    margin-top: 20px; 
+    width: auto;
+    align-self: center;
+    display: flex;
+    justify-content: center;
+}
+
+audio { 
+    max-width: 500px; 
+    margin: 0 auto;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+} 
+.videopagecontainer
+{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    padding: 2%;
+}
+
 .videorecords
 {
     padding: 5%;

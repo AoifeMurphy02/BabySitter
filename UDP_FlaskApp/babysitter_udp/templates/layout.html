@@ -9,8 +9,10 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='nav.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='loginsignup.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='video.css') }}">
-      <!-- user -->
-      <link rel="stylesheet" href="{{ url_for('static', filename='user.css') }}">
+    <!-- settings.js  -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='global.css') }}">
+      <!-- user
+      <link rel="stylesheet" href="{{ url_for('static', filename='user.css') }}"> -->
       <!-- history -->
       <link rel="stylesheet" href="{{ url_for('static', filename='history.css') }}">
       <!-- onboarding -->
@@ -42,22 +44,22 @@
         <div id="dropdown-menu" class="dropdown-content">
             <button class="close-btn" onclick="toggleMenu()">✖</button>
             <div class="controlcenter">
-            <img src="{{ url_for('static', filename='images/logopurplebg.png') }}" class="applogo"alt="App Logo" />
-            <a class="control-button" href="/Parent">Parent/Host Controls</a>
+            <img src="{{ url_for('static', filename='images/logotrans.png') }}" class="applogo"alt="App Logo" />
             <a class="control-button" href="/user">My Baby</a>
+            <a class="control-button" href="/history">History</a>
             <a class="control-button" href="/settings">Settings</a>
-            <a class="control-button" href="/onboarding">onboarding</a>
         </div>
     </div>
           <h1>
             {% if request.endpoint in ['signup', 'login'] %}
-            <img src="{{ url_for('static', filename='images/logopurplebg.png') }}" class="applogo"alt="App Logo" />
+            <img src="{{ url_for('static', filename='images/logotrans.png') }}" class="applogo"alt="App Logo" />
     {% else %}
         {{ child_name }}
     {% endif %}
     </header>      
     {% block body %}
     {% endblock %}
+    <script src="{{ url_for('static', filename='js/settings.js') }}"></script>
 
     <nav>
         <div class="navbar">
@@ -103,7 +105,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    <script src="/static/js/dashboard.js"></script>
+    <script src="/static/js/settings.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
+    
 
 
     

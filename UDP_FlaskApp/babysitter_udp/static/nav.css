@@ -1,7 +1,13 @@
-body
-{
+
+
+html, body {
+    height: 100%; /* Ensure they take full height */
+    margin: 0;
+    padding: 0;
+    overflow: auto; /* Ensure scrolling is enabled */
     background-color: #e1daeb;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+
 }
 
 
@@ -163,7 +169,7 @@ header h1 {
 }
 
 /* dash css */
-
+/* 
 .HistoryBlock {
     display: flex;
     flex-direction: row;
@@ -197,8 +203,39 @@ header h1 {
     width: 40px; 
     height: 40px;
     flex-shrink: 0;
+} */
+
+.HistoryLink {
+    text-decoration: none; 
+    color: inherit; 
+    display: block; 
+    padding-bottom: 5%;
 }
 
+.HistoryBlock {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    padding: 10px;
+    margin: 15px auto;
+    border: 2px solid #ccc; 
+    border-radius: 20px;
+    max-width: 600px; 
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
+    transition: transform 0.3s ease, box-shadow 0.3s ease;  
+    cursor: pointer;  
+    
+}
+ 
+.HistoryContent {
+    display: flex;
+    align-items: center;
+    gap: 20px;  
+    width: 100%; 
+}
+ 
 .responsive-img {
     width: 70px; 
     height: 70px;
@@ -206,6 +243,27 @@ header h1 {
     object-fit: cover;
     flex-shrink: 0; 
 }
+ 
+.Text {
+    display: flex;
+    flex: 1;  
+    color: #444; 
+    justify-content: space-evenly;
+    flex-wrap: wrap;
+    align-items: baseline; 
+}
+
+.Text p {
+    margin: 0;
+    font-size: 25px;
+    line-height: 1.4;
+}
+
+.HistoryBlock:hover {
+    transform: scale(1.02); 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
 
 
     .block3 {
@@ -262,19 +320,6 @@ header h1 {
 }
 
 
-.blocknav button:hover {
-    background-color: #FF3B30;
-    border-color: #111;
-    color: #111;
-    border: 1px solid #111;
-}
-
-.blocknav button.button1:hover {
-    background-color: #007BFF;
-    border-color: #111;
-    color: #111;
-    border: 1px solid #111;
-}
 
 .blocknav svg {
     margin-right: 3px;
@@ -282,7 +327,11 @@ header h1 {
     height: 28px;
 }
 
-
+a
+{
+    text-decoration: none;
+    color: #111;
+}
 
 .Text {
     flex: 1; 
@@ -328,7 +377,7 @@ header h1 {
     }
 
     .Text p {
-        font-size: 11px; 
+        font-size: 15px; 
     }
 }
 
@@ -369,7 +418,7 @@ ul {
     }
 
     .containerindex
-{   margin-bottom: 20%;
+{   margin-bottom: 10%;
     padding: 8%;
 }
 }
@@ -410,8 +459,58 @@ h4
 
 .block2 {
     background-color: #f0f0f0;
-    padding: 20px;
+    padding: 10px;
     border-radius: 20px;
+    margin-top: 10px; 
+    
+}
+
+.block1 h4 {
+    padding-left: 10%;
+}
+
+
+
+
+.block1 {
+    vertical-align: middle;
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 20px;
+    width: 100%; 
+    height: 10%; 
+    display: flex; ;
+    align-items: center; 
+    margin-bottom: 20px;
+    flex-wrap: wrap
+}
+
+.buttonmusic { 
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.buttonmusic:hover {
+    background-color: #45a049;  
+}
+ 
+.buttonmusic svg {
+    width: 20px;
+    height: 20px;
+    fill: white;  
+    margin-right: 8px;  
+}
+ 
+.buttonmusic:focus {
+    outline: none;
 }
 
 
@@ -455,6 +554,11 @@ h4
 }
 
 .statusboard svg, .statusIcons img {
+    width: 32px;
+    height: 32px;
+    fill: #333;
+}
+.statusboard .buttonmusic svg {
     width: 32px;
     height: 32px;
     fill: #333;

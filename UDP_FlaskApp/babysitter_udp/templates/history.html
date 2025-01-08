@@ -2,7 +2,13 @@
 {% extends "layout.html" %}
 {% block body %}
 <div class="history-container">
+    <div class="historyparent">
     <h1>Activity History</h1>
+    <!-- refresh button -->
+    <button class="refresh-btn" onclick="window.location.reload();">
+        <i class="bi bi-arrow-clockwise"></i>
+    </button>    
+</div>
     <p>View all recorded activities and events of {{ child_name }}.</p>
     <div class="history-list">
         <!-- Example of individual activity cards -->
@@ -23,5 +29,37 @@
         </div>
     </div>
 </div>
+<div class="videocontainer">
+    <h1>Video Records</h1>
+<div class="videorecords">
+    <h2>20/10/2024 20:50</h2>
+    <video controls autoplay>
+        <source src="{{ video_url }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+<div class="videorecords">
+    <h2>20/10/2024 16:44</h2>
+    <video controls autoplay>
+        <source src="{{ video_url }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+<div class="videorecords">
+    <h2>20/10/2024 16:44</h2>
+    <video controls autoplay>
+        <source src="{{ video_url }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
 
+<div class="videorecords">
+    <h2>20/10/2024 23:11</h2>
+    <video controls autoplay>
+        <source src="{{ video_url }}" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+</div>
+</div>
+</div>
 {% endblock %}

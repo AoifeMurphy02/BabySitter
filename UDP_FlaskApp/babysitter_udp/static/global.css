@@ -1,0 +1,222 @@
+/* Dark Mode Styles */
+.dark-mode {
+    background-color: #2c2636;
+    color: #ffffff; 
+}
+
+.dark-mode .container {
+    background-color: #2c2636; /* Darker background for content containers */
+}
+
+.dark-mode .settings-types {
+    background-color: #2c2636; /* Dark background for settings section */
+}
+
+.dark-mode .setting-type {
+    background-color: #2c2636; /* Darker individual items */
+    color: #fff; /* White text */
+}
+
+.dark-mode .setting-type:hover {
+    background-color: #2c2636; /* Hover effect in dark mode */
+}
+
+/* Example for other sections you want to target */
+.dark-mode h1,
+.dark-mode h2,
+.dark-mode p {
+    color: #ffffff; /* White text for headings and paragraphs */
+}
+
+.dark-mode input {
+    background-color: #2c2636;
+    color: #fff;
+}
+
+.dark-mode .search-bar input {
+    background-color: #322b3c; 
+    border: 1px solid #666666;
+    color: #fff;
+}
+
+.dark-mode .profile-header {
+    background-color: #494450;
+    color: #fff; 
+}
+
+.dark-mode #statsChart {
+    background-color: #494450;
+    color: #fff; 
+}
+
+.dark-mode #myChart canvas {
+    background-color: #494450;
+    color: #fff; 
+}
+
+.dark-mode .blockuser button.button1{
+    background-color: #494450;
+    color: #fff; 
+}
+.dark-mode .profile-info h2 {
+    background-color: #494450;
+    color: #fff; 
+}
+
+.dark-mode .profile-info .age {
+    color: #fff; 
+}
+.dark-mode .edit-profile-btn {
+    color: #fff; 
+    background-color: #1d152b;
+}
+
+.dark-mode .editProfileModal {
+    color: #fff; 
+    background-color: #000000;
+}
+
+.dark-mode .saveProfileModal {
+    color: #fff; 
+    background-color: #1d152b;
+}
+
+.dark-mode #editProfileForm button {
+    color: #fff; 
+    background-color: #1d152b;
+}
+
+.dark-mode .modal-content {
+    color: #fff; 
+    background-color: #000000;
+    width: 100%;
+}
+
+.dark-mode #editProfileForm select
+{
+    background-color: #2c2636;
+    color: #fff;
+}
+
+.dark-mode .headerchild {
+    color: #fff;
+    background-color: #1d152b;
+    
+}
+
+.dark-mode .navbar {
+    color: #fff;
+    background-color: #1d152b;
+    
+}
+
+.dark-mode .navbar svg {
+    color: #fff;
+}
+
+.dark-mode .homenav-item svg {
+    color: #fff;
+}
+.dark-mode .homenav-item  {
+    color: #fff;
+    background-color: #1d152b;
+}
+
+.dark-mode .dropdown-content{
+    color: #fff;
+    background-color: #1d152b;
+
+}
+
+.dark-mode .containerindex{
+    color: #fff;
+    background-color: #494450;
+
+}
+.dark-mode .block2
+{
+    color: #fff;
+    background-color: #6f6c74;
+}
+
+.dark-mode .block1
+{
+    color: #fff;
+    background-color: #6f6c74;
+}
+
+.dark-mode  .statusboard li {
+    background-color: transparent;
+}
+
+
+.dark-mode  .statusboard svg {
+    background-color: transparent;
+}
+
+.dark-mode  .statusboard .buttonmusic {
+    background-color: transparent;
+}
+
+.dark-mode  .button1 {
+    background-color: transparent;
+    color: white;
+    border-color: #fff;
+}
+
+.dark-mode  .button2 {
+    background-color: transparent;
+    color: white;
+    border-color: #fff;
+}
+
+/* hisyory page */
+.dark-mode .history-container
+{
+    color: #fff;
+    background-color: #2c2636;
+}
+
+.dark-mode .history-container h1
+{
+    color: #fff; 
+    border-color: #2c2636;
+}
+
+.dark-mode .history-list, .dark-mode .history-list .activity-time,.dark-mode .history-list .activity-detail
+{
+    color: #fff; 
+    border-color: #2c2636;
+}
+
+
+.dark-mode .activity-card
+{
+    color: #fff;
+    background-color: #494450;
+    border-color: #2c2636;
+}
+
+.dark-mode .view-details-btn {
+    color: #fff;
+    background-color: #1d152b;
+    border-color: #1d152b;
+}
+
+.dark-mode .refresh-btn {
+    color: #fff;
+}
+
+
+.dark-mode .videorecords, .dark-mode .videorecords h2
+{
+    color: #fff;
+    background-color: #494450;
+}
+
+.dark-mode a
+{
+    text-decoration: none;
+    color: #fff;
+}
+

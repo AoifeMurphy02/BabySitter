@@ -23,15 +23,19 @@
                     </video>-->  
                 </div>
             </div>
-        <h4>Status</h4>
+
+
+ <h4>Status</h4>
+   <div class="block1">
+        <ul class="statusboardlist"></ul>
         <div id="cryingAlert" style="display:none; color: red; font-size: 20px; font-weight: bold;">
             Baby is crying!
         </div>
-
-          <div>
-            <h4>Current Temperature: <span id="current_temp">25</span></h4>
-            <h4>Current Humidity: <span id="current_humidity">45%</span></h4>
-        </div>
+            <!-- <h4>Current Temperature: <span id="current_temp">25</span></h4>
+            <h4>Current Humidity: <span id="current_humidity">45%</span></h4> -->
+            <h4><i class="bi bi-thermometer-half"></i> Current Temperature: <span id="current_temp">25</span>°C</h4>
+            <h4><i class="bi bi-cloud-rain"></i> Current Humidity: <span id="current_humidity">45%</span></h4>
+       
 
         <div id="highAlert" style="display:none; color: red; font-size: 20px; font-weight: bold;">
             {{ child_name }}'s' room is too high!
@@ -39,6 +43,7 @@
         <div id="lowAlert" style="display:none; color: red; font-size: 20px; font-weight: bold;">
             {{ child_name }}'s' room is too cold!
         </div>
+    </div>
             <div class="block2">
                 
                 <ul class="statusboardlist">
@@ -59,9 +64,9 @@
 
                         </div>
                     </li>
-                
+                 <li class="statusboard"  > <!--music icon-->
                     <button  class="buttonmusic" onclick="sendPlayMusicCommand()">
-                    <li class="statusboard"  > <!--music icon-->
+                   
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-music-note-list" viewBox="0 0 16 16">
                             <path d="M12 13c0 1.105-1.12 2-2.5 2S7 14.105 7 13s1.12-2 2.5-2 2.5.895 2.5 2"/>
                             <path fill-rule="evenodd" d="M12 3v10h-1V3z"/>
@@ -71,32 +76,21 @@
                     </li>
                 </button>
                 </ul>
-                <div class="statusboard2">
-                    <h4>{{ child_name }} is...</h4>
-                    <span id="statusText">Active</span>
-                    <div class="statusIcons">
-                        <div class="statusIcon active" data-status="Active">
-                            <img src="static/images/active-icon.png" alt="Active" width="32" height="32">
-                        </div>
-                        <div class="statusIcon" data-status="Sleeping">
-                            <img src="static/images/sleeping-icon.png" alt="Sleeping" width="32" height="32">
-                        </div>
-                        <div class="statusIcon" data-status="Crying">
-                            <img src="static/images/crying-icon.png" alt="Crying" width="32" height="32">
-                        </div>
-                    </div>
-                </div>
+            
                 
                
             </div>
             <div class="blocknav">
+              
                 <button class="button1">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-webcam" viewBox="0 0 16 16">
+                    <a href="{{ url_for('video') }}" class="button1-link">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-webcam" viewBox="0 0 16 16">
                         <path d="M0 6a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2H9.269c.144.162.33.324.531.475a7 7 0 0 0 .907.57l.014.006.003.002A.5.5 0 0 1 10.5 13h-5a.5.5 0 0 1-.224-.947l.003-.002.014-.007a5 5 0 0 0 .268-.148 7 7 0 0 0 .639-.421c.2-.15.387-.313.531-.475H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v3a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V6a1 1 0 0 0-1-1z"/>
                         <path d="M8 6.5a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0m7 0a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/>
                       </svg>
-                    Live View
-                </button>
+                      Live View
+                    </a>
+                  </button>                  
                 <button class="button1">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-geo-alt" viewBox="0 0 16 16">
                         <path d="M12.166 8.94c-.524 1.062-1.234 2.12-1.96 3.07A32 32 0 0 1 8 14.58a32 32 0 0 1-2.206-2.57c-.726-.95-1.436-2.008-1.96-3.07C3.304 7.867 3 6.862 3 6a5 5 0 0 1 10 0c0 .862-.305 1.867-.834 2.94M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10"/>
@@ -106,22 +100,22 @@
                 </button>
             </div>
             <h4>History</h4>
-            <div class="HistoryBlock">
-                <div class="HistoryContent">
-                    <img src="{{ url_for('static', filename='images/pretty.png') }}" alt="Pretty Image" class="responsive-img">
-                    <div class="Text">
-                       
-                        <h4>20:44</h4>
-                        <p>{{ child_name }}: Motion Detected</p>
-                    </div>
-                </div>
+           <a href="/history" class="HistoryLink">
+    <div class="HistoryBlock">
+        <div class="HistoryContent">
+            <video controls autoplay class="responsive-img">
+                <source src="{{ video_url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <div class="Text">
+                
+                <p>{{ child_name }}: Motion Detected</p>
             </div>
-            <div class="block3">
-                <button class="grid-button">Sleep</button>
-                <button class="grid-button2">Activity</button>
-                <button class="grid-button3">Temperature</button>
-                <button class="grid-button4">History</button>
-            </div>
+        </div>
+    </div>
+</a>
+
+            
 
             
         </form>

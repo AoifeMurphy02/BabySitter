@@ -152,7 +152,7 @@ REGISTRANTS = {}
 
 guardian_name1 = "John"
 guardian_name2 = "Jane"
-child_name = "Meghan"
+child_name = "Your Baby"
 app_name = "Babysitter"
 child_age = 1
 
@@ -180,10 +180,6 @@ child_age = 1
 #                             )
 @app.route("/", methods=["GET", "POST"])
 def index():
-    # Check if user is logged in
-    user = session.get('user')
-    if not user:
-        return redirect(url_for('login'))
     
     # Retrieve additional session data if needed
     user_picture = session.get('picture')
@@ -198,8 +194,7 @@ def index():
         sound_url=sound_url,
         child_name=child_name, 
         guardian_name1=guardian_name1, 
-        guardian_name2=guardian_name2,
-        user=user, 
+        guardian_name2=guardian_name2, 
         app_name=app_name, 
         user_picture=user_picture
     )
@@ -266,7 +261,7 @@ def serve_sw():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    app_name = "Demo App"  # App name for context
+    app_name = "Babysitter"  
 
     if request.method == 'POST':
         email = request.form.get('email')
